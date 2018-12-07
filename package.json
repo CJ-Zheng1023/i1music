@@ -28,8 +28,6 @@
   "dependencies": {
     "axios": "^0.18.0",
     "better-scroll": "^1.13.2",
-    "echarts": "^4.2.0-rc.2",
-    "node-xlsx": "^0.12.1",
     "normalize.css": "^8.0.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
@@ -81,6 +79,8 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "^0.0.32",
     "karma-webpack": "^3.0.0",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
     "mini-css-extract-plugin": "0.4.0",
     "mocha": "^5.2.0",
     "multispinner": "^0.2.1",

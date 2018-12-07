@@ -22,9 +22,9 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     minHeight: 563,
     useContentSize: true,
-    minWidth: 1000
-    // frame: false
-    // titleBarStyle: 'hidden'
+    minWidth: 1000,
+    frame: false,
+    titleBarStyle: 'hidden'
   })
   // mainWindow.webContents.openDevTools()
 

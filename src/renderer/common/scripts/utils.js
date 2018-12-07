@@ -1,9 +1,4 @@
-import {shell} from 'electron'
-import xlsx from 'node-xlsx'
 let crypto = require('crypto')
-let os = require('os')
-let fs = require('fs')
-let path = require('path')
 
 const USER_NAME_KEY = 'username'
 const TOKEN_KEY = 'token'
@@ -33,20 +28,5 @@ export default {
   clearStorage () {
     removeItem(USER_NAME_KEY)
     removeItem(TOKEN_KEY)
-  },
-  exportExcel (exportData) {
-    let exportPath = path.join(os.homedir(), '结果集.xlsx')
-    let buffer = xlsx.build([
-      {
-        name: 'sheet1',
-        data: exportData
-      }
-    ])
-    fs.writeFile(exportPath, buffer, (error) => {
-      if (error) {
-        console.error(error)
-      }
-      shell.openExternal(`file://${exportPath}`)
-    })
   }
 }
