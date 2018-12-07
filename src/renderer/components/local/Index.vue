@@ -1,3 +1,3 @@
 <template>
-  <div>local music</div>
+  <router-view></router-view>
 </template>

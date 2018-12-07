@@ -4,7 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 let router = new Router({
-  linkExactActiveClass: 'active',
+  linkActiveClass: 'active',
   routes: [
     {
       path: '/',
@@ -13,7 +13,20 @@ let router = new Router({
     {
       path: '/local',
       name: 'Local',
-      component: () => import('@/components/local/Index')
+      component: () => import('@/components/local/Index'),
+      redirect: '/local/playlist',
+      children: [
+        {
+          path: 'playlist',
+          name: 'PlayList',
+          component: () => import('@/components/local/PlayList')
+        },
+        {
+          path: 'playlistdetail',
+          name: 'PlayListDetail',
+          component: () => import('@/components/local/PlayListDetail')
+        }
+      ]
     },
     {
       path: '/online',
