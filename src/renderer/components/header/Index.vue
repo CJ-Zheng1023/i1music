@@ -72,7 +72,7 @@
       .logo{
         width: 30px;
         display: inline-block;
-        background-color: #ffcc00;
+        background-color: #fcdf35;
         border-radius: 3px;
         text-align: center;
         line-height: 30px;
@@ -82,8 +82,9 @@
         }
       }
       .title{
-        color: #c0a707;
+        color: #fcdf35;
         font-size: 19px;
+        font-weight: bold;
       }
     }
     .menu-bar{
@@ -100,7 +101,8 @@
           a{
             font-size: 14px;
             text-decoration: none;
-            color: #c0a707;
+            color: #fcdf35;
+            font-weight: bold;
           }
           a.active{
             color: #fff;
