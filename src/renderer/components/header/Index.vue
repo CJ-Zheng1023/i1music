@@ -88,7 +88,6 @@
       }
     }
     .menu-bar{
-      -webkit-app-region: no-drag;
       display: inline-block;
       .menus{
         margin: 0;
@@ -99,6 +98,7 @@
           list-style: none;
           margin: 0 10px;
           a{
+            -webkit-app-region: no-drag;
             font-size: 14px;
             text-decoration: none;
             color: #fcdf35;
@@ -111,9 +111,9 @@
       }
     }
     .actions{
-      -webkit-app-region: no-drag;
       float: right;
       i{
+        -webkit-app-region: no-drag;
         margin: 0 3px;
         cursor: pointer;
         color: #a0a0a0;

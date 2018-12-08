@@ -14,7 +14,9 @@
                   <a href="javascript:;">#R&B</a>
                 </li>
               </ul>
-              <div class=""></div>
+              <div class="btn-wrapper">
+                <i class="iconfont icon-play"></i>
+              </div>
             </div>
           </div>
         </el-col>
