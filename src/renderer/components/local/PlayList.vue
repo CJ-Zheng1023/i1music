@@ -18,41 +18,102 @@
                 <i class="iconfont icon-play"></i>
               </div>
             </div>
+            <h3 class="name">
+              <span>Eminem全专辑</span>
+              <div class="actions">
+                <i class="iconfont icon-delete"></i>
+              </div>
+            </h3>
           </div>
         </el-col>
         <el-col :md="6" :xl="4">
           <div class="card">
             <div class="figure">
               <img src="../../assets/images/2.jpeg" />
+              <ul class="tags clearfix">
+                <li class="tag-item">
+                  <a href="javascript:;">#rock</a>
+                </li>
+              </ul>
+              <div class="btn-wrapper">
+                <i class="iconfont icon-play"></i>
+              </div>
             </div>
+            <h3 class="name">
+              <span>FTIland全集</span>
+              <div class="actions">
+                <i class="iconfont icon-delete"></i>
+              </div>
+            </h3>
           </div>
         </el-col>
         <el-col :md="6" :xl="4">
           <div class="card">
             <div class="figure">
               <img src="../../assets/images/3.jpeg" />
+              <ul class="tags clearfix">
+                <li class="tag-item">
+                  <a href="javascript:;">#ballad</a>
+                </li>
+                <li class="tag-item">
+                  <a href="javascript:;">#R&B</a>
+                </li>
+              </ul>
+              <div class="btn-wrapper">
+                <i class="iconfont icon-play"></i>
+              </div>
             </div>
+            <h3 class="name">
+              <span>eddy kim</span>
+              <div class="actions">
+                <i class="iconfont icon-delete"></i>
+              </div>
+            </h3>
           </div>
         </el-col>
         <el-col :md="6" :xl="4">
           <div class="card">
             <div class="figure">
               <img src="../../assets/images/4.jpeg" />
+              <ul class="tags clearfix">
+                <li class="tag-item">
+                  <a href="javascript:;">#hip hop</a>
+                </li>
+              </ul>
+              <div class="btn-wrapper">
+                <i class="iconfont icon-play"></i>
+              </div>
             </div>
+            <h3 class="name">
+              <span>dok2</span>
+              <div class="actions">
+                <i class="iconfont icon-delete"></i>
+              </div>
+            </h3>
           </div>
         </el-col>
         <el-col :md="6" :xl="4">
           <div class="card">
             <div class="figure">
               <img src="../../assets/images/2.jpeg" />
+              <ul class="tags clearfix">
+                <li class="tag-item">
+                  <a href="javascript:;">#hip hop</a>
+                </li>
+                <li class="tag-item">
+                  <a href="javascript:;">#R&B</a>
+                </li>
+              </ul>
+              <div class="btn-wrapper">
+                <i class="iconfont icon-play"></i>
+              </div>
             </div>
-          </div>
-        </el-col>
-        <el-col :md="6" :xl="4">
-          <div class="card">
-            <div class="figure">
-              <img src="../../assets/images/4.jpeg" />
-            </div>
+            <h3 class="name">
+              <span>nafla&loopy</span>
+              <div class="actions">
+                <i class="iconfont icon-delete"></i>
+              </div>
+            </h3>
           </div>
         </el-col>
       </el-row>
