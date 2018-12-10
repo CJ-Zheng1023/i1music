@@ -4,14 +4,21 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+import {Row, Col, Button, ButtonGroup} from 'element-ui'
+import BScroll from 'better-scroll'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'normalize.css/normalize.css'
 import '@/common/lib/iconfont/iconfont.css'
 import '@/common/styles/styles.less'
+Vue.use(Row)
+Vue.use(Col)
+Vue.use(Button)
+Vue.use(ButtonGroup)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 
 // Vue.http = Vue.prototype.$http = axios
+Vue.BScroll = Vue.prototype.$BScroll = BScroll
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

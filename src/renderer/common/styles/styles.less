@@ -100,29 +100,10 @@
       z-index: 1;
     }
     .tags{
-      margin: 0;
-      padding: 0;
       z-index: 2;
       position: absolute;
       left: 0;
       bottom: 4px;
-      .tag-item{
-        float: left;
-        list-style: none;
-        margin: 2px 3px;
-        padding: 4px 8px;
-        background-color: #fcdf35;
-        border-radius: 13px;
-        box-sizing: border-box;
-        transform: scale(1);
-        transition: transform .5s;
-        a{
-          color: #000;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: bold;
-        }
-      }
     }
     @btn-wrapper-size: 50px;
     .btn-wrapper{
@@ -141,6 +122,29 @@
         font-size: 23px;
         color: #fff;
       }
+    }
+  }
+}
+// 标签列表样式
+.tags {
+  margin: 0;
+  padding: 0;
+  .tag-item {
+    float: left;
+    list-style: none;
+    margin: 2px 3px;
+    padding: 4px 8px;
+    background-color: #fcdf35;
+    border-radius: 13px;
+    box-sizing: border-box;
+    transform: scale(1);
+    transition: transform .5s;
+    a {
+      color: #000;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: text;
     }
   }
 }
