@@ -116,6 +116,12 @@
             </h3>
           </div>
         </el-col>
+        <el-col :md="6" :xl="4">
+          <div class="card card-create">
+            <div class="figure"></div>
+            <i class="iconfont icon-create1"></i>
+          </div>
+        </el-col>
       </el-row>
     </div>
   </div>

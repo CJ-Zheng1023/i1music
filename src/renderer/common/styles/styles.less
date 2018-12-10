@@ -1,5 +1,5 @@
 * {
-  font-family: "AV", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
 }
 .clearfix:after{
   content: "";
@@ -18,6 +18,29 @@
   cursor: pointer;
   width: 100%;
   margin: 8px 0;
+  @card-title-line-height: 18px;
+  @card-title-tb-margin: 16px;
+  //新建播放列表按钮卡片
+  &.card-create{
+    padding-bottom: @card-title-line-height + @card-title-tb-margin * 2;
+    position: relative;
+    &:hover{
+      .figure{
+        border-color: #454546;
+      }
+      i{
+        color: #a2a2a2;
+      }
+    }
+    i{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: #5d7082;
+      font-size: 80px;
+    }
+  }
   .name{
     color: #fff;
     font-size: 16px;
@@ -28,6 +51,8 @@
     white-space: nowrap;
     text-align: left;
     position: relative;
+    margin: @card-title-tb-margin 0;
+    line-height: @card-title-line-height;
     .actions{
       position: absolute;
       right: 5px;
