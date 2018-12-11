@@ -32,6 +32,7 @@
           </div>
           <div class="panel-body">
             <el-table :data="musicList" header-row-class-name="i-table-header">
+              <el-table-column type="index" :index="indexMethod"></el-table-column>
               <el-table-column prop="song" label="歌曲" sortable></el-table-column>
               <el-table-column prop="singer" label="歌手"></el-table-column>
               <el-table-column prop="time" label="时长"></el-table-column>
@@ -79,6 +80,11 @@
             time: '5:00'
           }
         ]
+      }
+    },
+    methods: {
+      indexMethod (index) {
+        return index + 1
       }
     },
     mounted () {

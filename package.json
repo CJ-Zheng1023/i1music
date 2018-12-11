@@ -29,6 +29,7 @@
     "axios": "^0.18.0",
     "better-scroll": "^1.13.2",
     "element-ui": "^2.4.11",
+    "mediaserver": "^0.1.1",
     "normalize.css": "^8.0.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",

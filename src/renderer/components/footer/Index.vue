@@ -1,9 +1,10 @@
 <template>
   <footer>
     <div class="inner">
+      <audio :src="musicServer" crossorigin="anonymous" ref="audio"></audio>
       <div class="btns" >
         <i class="iconfont icon-step-backward"></i>
-        <i class="iconfont icon-play"></i>
+        <i class="iconfont icon-play" @click="playOrPause"></i>
         <i class="iconfont icon-step-forward"></i>
       </div>
       <div class="progress">
@@ -27,6 +28,29 @@
     </div>
   </footer>
 </template>
+<script>
+  import {ipcRenderer} from 'electron'
+  export default {
+    data () {
+      return {
+        musicServer: ''
+      }
+    },
+    created () {
+      ipcRenderer.on('music-server-config', (e, {port, allowKeys}) => {
+        console.log(allowKeys)
+        let filePath = 'E:/music/test.mp3'
+        this.musicServer = `http://localhost:${port}/${encodeURIComponent(filePath)}`
+      })
+      ipcRenderer.send('view-ready')
+    },
+    methods: {
+      playOrPause () {
+        this.$refs.audio.play()
+      }
+    }
+  }
+</script>
 <style scoped lang="less">
   @import '../../common/styles/variable.less';
   @footer-color: #fff;

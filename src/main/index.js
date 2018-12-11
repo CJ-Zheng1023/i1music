@@ -1,6 +1,7 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain } from 'electron'
+import server from './server'
 
 /**
  * Set `__static` path to static files in production
@@ -34,6 +35,14 @@ function createWindow () {
     mainWindow = null
   })
 }
+server.start((port, allowKeys) => {
+  ipcMain.on('view-ready', e => {
+    e.sender.send('music-server-config', {
+      port,
+      allowKeys
+    })
+  })
+})
 
 app.on('ready', createWindow)
 
