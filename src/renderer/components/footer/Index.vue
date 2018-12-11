@@ -47,6 +47,7 @@
     methods: {
       playOrPause () {
         this.$refs.audio.play()
+        console.log(this.$refs.audio.duration)
       }
     }
   }
