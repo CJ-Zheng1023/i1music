@@ -30,6 +30,13 @@
               </a>
             </div>
           </div>
+          <div class="panel-body">
+            <el-table :data="musicList" header-row-class-name="i-table-header">
+              <el-table-column prop="song" label="歌曲" sortable></el-table-column>
+              <el-table-column prop="singer" label="歌手"></el-table-column>
+              <el-table-column prop="time" label="时长"></el-table-column>
+            </el-table>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -38,6 +45,42 @@
 </template>
 <script>
   export default {
+    data () {
+      return {
+        musicList: [
+          {
+            song: 'song1',
+            singer: 'singer1',
+            time: '4:05'
+          },
+          {
+            song: 'song2',
+            singer: 'singer2',
+            time: '3:22'
+          },
+          {
+            song: 'song3',
+            singer: 'singer3',
+            time: '5:00'
+          },
+          {
+            song: 'song1',
+            singer: 'singer1',
+            time: '4:05'
+          },
+          {
+            song: 'song2',
+            singer: 'singer2',
+            time: '3:22'
+          },
+          {
+            song: 'song3',
+            singer: 'singer3',
+            time: '5:00'
+          }
+        ]
+      }
+    },
     mounted () {
       this.$nextTick(() => {
         this.scroll = new this.$BScroll(this.$refs.scroll, {
@@ -87,21 +130,24 @@
     }
   }
   .panel{
-    background-color: #353536;
-    height: 400px;
+    background-color: rgba(0, 0, 0, .25);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.05);
     border-radius: @box-border-radius;
-    box-shadow: 1px 4px 10px 2px #575757;
-    padding: 15px 25px;
+    padding: 15px 25px 25px 25px;
     .panel-header{
+      position: relative;
+      padding: 30px 30px;
       .title{
         font-size: 16px;
         color: #fff;
         margin: 0;
-        padding: 15px 0 25px 0;
         text-align: center;
       }
       .actions{
-        float: right;
+        position: absolute;
+        right: 0;
+        top: 0;
       }
     }
   }

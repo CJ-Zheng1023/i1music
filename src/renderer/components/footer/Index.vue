@@ -31,6 +31,7 @@
   @import '../../common/styles/variable.less';
   @footer-color: #fff;
   footer{
+    background-color: @app-hf-bg-color;
     line-height: @app-footer-height;
     padding: 0 @app-lr-padding;
     position: absolute;

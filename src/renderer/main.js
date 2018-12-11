@@ -4,7 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
-import {Row, Col, Button, ButtonGroup} from 'element-ui'
+import {Row, Col, Button, ButtonGroup, Table, TableColumn} from 'element-ui'
 import BScroll from 'better-scroll'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'normalize.css/normalize.css'
@@ -14,6 +14,8 @@ Vue.use(Row)
 Vue.use(Col)
 Vue.use(Button)
 Vue.use(ButtonGroup)
+Vue.use(Table)
+Vue.use(TableColumn)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 

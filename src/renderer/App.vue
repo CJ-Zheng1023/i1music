@@ -28,6 +28,8 @@
   }
   #app{
     background-color: @app-bg-color;
+    background-image: url("./assets/images/bg2.jpg");
+    background-size: contain;
     padding-top: @app-header-height;
     padding-bottom: @app-footer-height;
     box-sizing: border-box;

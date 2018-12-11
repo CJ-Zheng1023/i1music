@@ -58,9 +58,11 @@
 <style scoped lang="less">
   @import '../../common/styles/variable.less';
   header{
+    background-color: @app-hf-bg-color;
     -webkit-app-region: drag;
     box-sizing: border-box;
     line-height: @app-header-height;
+    height: @app-header-height;
     position: absolute;
     left: 0;
     top: 0;

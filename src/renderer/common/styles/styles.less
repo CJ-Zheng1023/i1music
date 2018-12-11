@@ -1,5 +1,5 @@
 * {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .clearfix:after{
   content: "";
@@ -10,11 +10,11 @@
 }
 //歌单卡片样式
 .card{
-  background-color: #353536;
+  background-color: rgba(0, 0, 0, .25);
   border-radius: 3px;
   display: inline-block;
   box-sizing: border-box;
-  border: 8px solid #2f2f2f;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   width: 100%;
   margin: 8px 0;
@@ -25,9 +25,6 @@
     padding-bottom: @card-title-line-height + @card-title-tb-margin * 2;
     position: relative;
     &:hover{
-      .figure{
-        border-color: #454546;
-      }
       i{
         color: #a2a2a2;
       }
@@ -64,7 +61,7 @@
     }
   }
   &:hover{
-    border-color: #454546;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.05);
     background-color: #454546;
     .figure{
       img{
@@ -89,7 +86,6 @@
     width: 100%;
     padding-bottom: 100%;
     position: relative;
-    border: 1px solid #353536;
     box-sizing: border-box;
     img{
       position: absolute;
@@ -147,5 +143,36 @@
       cursor: text;
     }
   }
+}
+//element ui 表格样式重置
+.el-table, .el-table .i-table-header, .el-table .i-table-header th{
+  background-color: transparent;
+}
+.el-table .i-table-header th{
+  color: #fff;
+  padding: 0;
+}
+.el-table .i-table-header th{
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+.el-table tbody tr{
+  &:nth-of-type(odd){
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  &:nth-of-type(even){
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  color: #fff;
+  &:hover{
+    td{
+      background-color: transparent !important;
+    }
+  }
+  td{
+    border: none;
+  }
+}
+.el-table::before{
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
