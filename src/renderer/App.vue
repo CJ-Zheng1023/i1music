@@ -25,11 +25,13 @@
   }
   body{
     overflow: hidden;
+    //使用elementUI的dialog，会给body加17px的padding-right  TODO
+    padding-right: 0 !important;
   }
   #app{
     background-color: @app-bg-color;
     background-image: url("./assets/images/bg2.jpg");
-    background-size: contain;
+    background-size: cover;
     padding-top: @app-header-height;
     padding-bottom: @app-footer-height;
     box-sizing: border-box;

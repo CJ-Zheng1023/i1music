@@ -119,19 +119,66 @@
           </div>
         </el-col>
         <el-col :md="6" :xl="4">
-          <div class="card card-create">
+          <div class="card card-create" @click="dialogVisible = true">
             <div class="figure"></div>
             <i class="iconfont icon-create1"></i>
           </div>
         </el-col>
       </el-row>
     </div>
+    <el-dialog title="创建歌单" :visible.sync="dialogVisible" :append-to-body ="true" width="30%">
+      <el-form :model="playListForm" :rules="playListRules" ref="createForm" label-width="80px">
+        <el-form-item prop="title" class="form-item" label="歌单名称">
+          <el-input v-model="playListForm.title" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item prop="tags" class="form-item" label="歌单标签">
+          <el-input v-model="playListForm.tags" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="info" size="small" @click="chooseMusic">选择歌曲</el-button>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeDialog" size="small">取 消</el-button>
+        <el-button type="primary" @click="createPlayList" size="small">创 建</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
   export default {
     data () {
-      return {}
+      return {
+        dialogVisible: false,
+        playListForm: {
+          title: '',
+          tags: ''
+        },
+        playListRules: {
+          title: [
+            {required: true, message: '请输入歌单名称', trigger: 'blur'}
+          ],
+          tags: [
+            {required: true, message: '请输入歌单标签', trigger: 'blur'}
+          ]
+        }
+      }
+    },
+    methods: {
+      chooseMusic () {
+        console.log(123)
+      },
+      createPlayList () {
+        this.$refs['createForm'].validate(valid => {
+          if (valid) {
+            this.closeDialog()
+          }
+        })
+      },
+      closeDialog () {
+        this.dialogVisible = false
+        this.$refs['createForm'].resetFields()
+      }
     },
     mounted () {
       this.$nextTick(() => {

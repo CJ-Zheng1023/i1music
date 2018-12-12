@@ -4,7 +4,7 @@
       <audio :src="musicServer" crossorigin="anonymous" ref="audio"></audio>
       <div class="btns" >
         <i class="iconfont icon-step-backward"></i>
-        <i class="iconfont icon-play" @click="playOrPause"></i>
+        <i :class="['iconfont', isPlaying ? 'icon-pause' : 'icon-play']" @click="playOrPause"></i>
         <i class="iconfont icon-step-forward"></i>
       </div>
       <div class="progress">
@@ -15,8 +15,8 @@
           <div class="music-info">
             Eminem-The Way I Am
           </div>
-          <div class="bar">
-            <div class="percentage"></div>
+          <div class="bar" @click="clickProcessBar" ref="bar">
+            <div class="percentage" :style="{width: percentage + '%'}"></div>
           </div>
         </div>
       </div>
@@ -33,21 +33,60 @@
   export default {
     data () {
       return {
-        musicServer: ''
+        musicServer: '',
+        animationId: '',
+        isPlaying: false,
+        percentage: 0
       }
     },
     created () {
       ipcRenderer.on('music-server-config', (e, {port, allowKeys}) => {
-        console.log(allowKeys)
-        let filePath = 'E:/music/test.mp3'
+        let filePath = 'E:/music/Stray Kids-극과 극.wav'
         this.musicServer = `http://localhost:${port}/${encodeURIComponent(filePath)}`
       })
       ipcRenderer.send('view-ready')
     },
     methods: {
+      /**
+       * 播放实时时更新进度条
+       * @private
+       */
+      _drawProcessBar () {
+        const audio = this.$refs.audio
+        this.anmationId = window.requestAnimationFrame(this._drawProcessBar)
+        this.percentage = audio.currentTime / audio.duration * 100
+      },
+      /**
+       * 停止更新进度条
+       * @private
+       */
+      _stopDrawProcessBar () {
+        window.cancelAnimationFrame(this.anmationId)
+      },
+      /**
+       * 点击进度时，调整音频时间点
+       * @param e
+       */
+      clickProcessBar (e) {
+        const audio = this.$refs.audio
+        const rate = e.offsetX / this.$refs.bar.clientWidth
+        this.percentage = rate * 100
+        audio.currentTime = rate * audio.duration
+      },
+      /**
+       * 播放/停止音乐
+       */
       playOrPause () {
-        this.$refs.audio.play()
-        console.log(this.$refs.audio.duration)
+        const audio = this.$refs.audio
+        if (audio.paused || audio.ended) {
+          audio.play()
+          this._drawProcessBar()
+          this.isPlaying = true
+        } else {
+          audio.pause()
+          this._stopDrawProcessBar()
+          this.isPlaying = false
+        }
       }
     }
   }
@@ -112,7 +151,6 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 30%;
             height: 100%;
             background-color: @footer-color;
           }
