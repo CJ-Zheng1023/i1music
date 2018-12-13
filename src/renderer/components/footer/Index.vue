@@ -30,6 +30,7 @@
 </template>
 <script>
   import {ipcRenderer} from 'electron'
+  import {mapActions} from 'vuex'
   export default {
     data () {
       return {
@@ -43,10 +44,18 @@
       ipcRenderer.on('music-server-config', (e, {port, allowKeys}) => {
         let filePath = 'E:/music/Stray Kids-극과 극.wav'
         this.musicServer = `http://localhost:${port}/${encodeURIComponent(filePath)}`
+        // 去掉点，并存入vuex，用于后续创建歌单导入音乐时限定文件格式
+        allowKeys.forEach((item, index) => {
+          allowKeys[index] = item.replace('.', '')
+        })
+        this.setAllowKeys(allowKeys)
       })
       ipcRenderer.send('view-ready')
     },
     methods: {
+      ...mapActions('Music', [
+        'setAllowKeys'
+      ]),
       /**
        * 播放实时时更新进度条
        * @private
