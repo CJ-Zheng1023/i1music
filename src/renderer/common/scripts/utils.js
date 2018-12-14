@@ -35,5 +35,9 @@ export default {
     let sec = parseInt(seconds - 60 * min)
     sec = sec < 10 ? `0${sec}` : sec
     return `${min}:${sec}`
+  },
+  // 去除lowdb查出来的数据里附带的observer
+  formatData (data) {
+    return JSON.parse(JSON.stringify(data))
   }
 }

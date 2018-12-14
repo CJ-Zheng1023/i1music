@@ -1,7 +1,7 @@
 import db from '@/common/scripts/db'
 import utils from '@/common/scripts/utils'
 const mm = require('music-metadata')
-db.defaults({playLists: []})
+db.defaults({playLists: []}).write()
 export default {
   namespaced: true,
   state () {
@@ -50,23 +50,25 @@ export default {
     addPlayList ({commit}, playList) {
       const musicPaths = playList['musicPaths']
       return parseMusicFile(musicPaths).then(({musicList, cover}) => {
-        db.push('playLists', {
+        db.get('playLists').push({
           id: utils.idGenerator(),
           title: playList.title,
           tags: playList.tags.trim().replace(/, +/g, ',').replace(/， +/g, '，').replace(/ +/, ' ').split(/,|，| /),
           cover,
           musicList
-        })
+        }).write()
       })
     },
     // 查询歌单列表
     queryPlayLists ({commit}) {
-      const playLists = db.find('playLists')
+      let result = db.get('playLists').value()
+      const playLists = utils.formatData(result)
       commit('queryPlayLists', playLists)
     },
     // 查询歌单详情
     queryPlayListDetail ({commit}, id) {
-      const playListDetail = db.find('playLists', {id: id})
+      let result = db.get('playLists').find({id: id}).value()
+      const playListDetail = utils.formatData(result)
       commit('setPlayListInfo', {id: playListDetail.id, title: playListDetail.title, cover: playListDetail.cover})
       commit('setPlayListMusic', playListDetail.musicList)
       commit('setPlayListTag', playListDetail.tags)
@@ -75,12 +77,13 @@ export default {
     addMusic ({commit}, {musicPaths, id}) {
       return parseMusicFile(musicPaths).then(data => {
         let musicList = data['musicList']
-        let playListMusic = db.pushAll('playLists', musicList, {id: id}, 'musicList')
+        let result = db.get('playLists').find({id: id}).get('musicList').push(...musicList).write()
+        let playListMusic = utils.formatData(result)
         commit('setPlayListMusic', playListMusic)
       })
     },
     removePlayList ({commit}, id) {
-      db.remove('playLists', {id})
+      db.get('playLists').remove({id}).write()
     }
   }
 }
@@ -103,6 +106,7 @@ const parseMusicFile = paths => {
         hasFlag = true
       }
       let data = {
+        id: utils.idGenerator(),
         title: common.title,
         artist: common.artist,
         album: common.album,
