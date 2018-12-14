@@ -58,7 +58,7 @@ export default {
               title: common.title,
               artist: common.artist,
               album: common.album,
-              duration: format.duration
+              duration: utils.formatDuration(format.duration)
             }
             Object.assign(musicList[index], data)
           })

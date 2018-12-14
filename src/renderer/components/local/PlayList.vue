@@ -9,7 +9,7 @@
                 <img :src="imageServer + '/' + item.cover" />
                 <ul class="tags clearfix">
                   <li class="tag-item" v-for="tag in item.tags">
-                    <a href="javascript:;">{{tag}}</a>
+                    <a href="javascript:;"># {{tag}}</a>
                   </li>
                 </ul>
                 <div class="btn-wrapper">
@@ -24,6 +24,12 @@
               </h3>
             </div>
           </router-link>
+        </el-col>
+        <el-col :md="6" :xl="4">
+          <div class="card card-create" @click="openDialog">
+            <div class="figure"></div>
+            <i class="iconfont icon-create1"></i>
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -53,7 +59,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDialog" size="small">取 消</el-button>
-        <el-button type="primary" @click="createPlayList" size="small">创 建</el-button>
+        <el-button type="primary" @click="createPlayList" size="small" :loading="isLoading">创 建</el-button>
       </span>
     </el-dialog>
   </div>
@@ -77,7 +83,8 @@
             {required: true, message: '请输入歌单标签', trigger: 'blur'}
           ]
         },
-        chosenMusicSet: new Set()
+        chosenMusicSet: new Set(),
+        isLoading: false
       }
     },
     computed: {
@@ -127,18 +134,23 @@
           ],
           properties: ['openFile', 'multiSelections']
         }, filePaths => {
-          this.chosenMusicSet = new Set([...this.chosenMusicSet, ...filePaths])
+          if (filePaths) {
+            this.chosenMusicSet = new Set([...this.chosenMusicSet, ...filePaths])
+          }
         })
       },
       createPlayList () {
         this.$refs['createForm'].validate(valid => {
           if (valid) {
+            this.isLoading = true
             this.addPlayList({
               title: this.playListForm.title,
               tags: this.playListForm.tags,
               musicPaths: this.chosenMusicArray
             }).then(() => {
+              this.queryPlayLists()
               this.closeDialog()
+              this.isLoading = false
             })
           }
         })

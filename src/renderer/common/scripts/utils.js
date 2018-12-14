@@ -28,5 +28,12 @@ export default {
   clearStorage () {
     removeItem(USER_NAME_KEY)
     removeItem(TOKEN_KEY)
+  },
+  // 格式化音频时长，把秒转换成分
+  formatDuration (seconds) {
+    let min = parseInt(seconds / 60)
+    let sec = parseInt(seconds - 60 * min)
+    sec = sec < 10 ? `0${sec}` : sec
+    return `${min}:${sec}`
   }
 }
