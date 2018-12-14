@@ -53,7 +53,16 @@ const writeImage = (req, res) => {
       })
       res.end(metadata.common.picture[0].data)
     } else {
-      errorHandler(res, 'not have picture', 404)
+      throw new Error('not have picture')
     }
+  }).catch(e => {
+    console.log(e)
+    let data = fs.readFileSync('./static/images/4.jpeg', 'binary')
+    res.writeHead(200, {
+      'Content-Type': 'image/jpeg',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'max-age=' + (365 * 24 * 60 * 60 * 1000)
+    })
+    res.end(data, 'binary')
   })
 }
