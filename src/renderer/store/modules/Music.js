@@ -1,60 +1,84 @@
-import config from '@/common/scripts/config'
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
-const adapter = new FileSync(`${config.dbPath}/db.json`)
-console.log(config.dbPath)
-const db = low(adapter)
+import db from '@/common/scripts/db'
+import utils from '@/common/scripts/utils'
 const mm = require('music-metadata')
-const fs = require('fs')
-// const util = require('util')
-db.defaults({playLists: []}).write()
+db.defaults({playLists: []})
 export default {
   namespaced: true,
   state () {
     return {
       playLists: [],
       // 允许的扩展名
-      allowKeys: []
+      allowKeys: [],
+      imageServerPort: 0
+    }
+  },
+  getters: {
+    imageServer (state) {
+      return `http://localhost:${state.imageServerPort}`
     }
   },
   mutations: {
     setAllowKeys (state, data) {
       state.allowKeys = data
+    },
+    setImageServerPort (state, port) {
+      state.imageServerPort = port
+    },
+    queryPlayLists (state, playLists) {
+      state.playLists = playLists
     }
   },
   actions: {
     setAllowKeys ({commit}, data) {
       commit('setAllowKeys', data)
     },
+    setImageServerPort ({commit}, port) {
+      commit('setImageServerPort', port)
+    },
     addPlayList ({commit}, playList) {
-      const musicList = playList['musicList']
-      let promises = []
-      musicList.forEach(music => {
-        promises.push(mm.parseFile(music, {native: true}))
-      })
-      Promise.all(promises).then(metadatas => {
-        metadatas.forEach((item, index) => {
-          let common = item.common
-          let format = item.format
-          let data = {
-            music: musicList[index],
-            title: common.title,
-            artist: common.artist,
-            album: common.album,
-            duration: format.duration
-          }
-          let picture = common.picture
-          if (picture) {
-            data['picture'] = picture[0].data.toString('Binary')
-          }
-          db.get('playLists').push(data).write()
+      return new Promise((resolve, reject) => {
+        const musicPaths = playList['musicPaths']
+        let promises = []
+        let musicList = []
+        musicPaths.forEach((musicPath, index) => {
+          promises.push(mm.parseFile(musicPath, {native: true}))
+          musicList[index] = {path: musicPath}
         })
-        let data1 = db.get('playLists').find({title: '안아줘'}).value()
-        console.log(data1)
-        console.log(data1.picture)
-        let buffer = new Buffer(data1.picture, 'Binary')
-        fs.writeFileSync(`${config.dbPath}/1.jpeg`, buffer)
+        let hasFlag = false
+        let cover = ''
+        Promise.all(promises).then(metadatas => {
+          metadatas.forEach((item, index) => {
+            let common = item.common
+            let format = item.format
+            if (!hasFlag && common.picture) {
+              cover = musicList[index].path
+              hasFlag = true
+            }
+            let data = {
+              title: common.title,
+              artist: common.artist,
+              album: common.album,
+              duration: format.duration
+            }
+            Object.assign(musicList[index], data)
+          })
+          db.push('playLists', {
+            id: utils.idGenerator(),
+            title: playList.title,
+            tags: playList.tags.trim().replace(/, +/g, ',').replace(/， +/g, '，').replace(/ +/, ' ').split(/,|，| /),
+            cover,
+            musicList
+          })
+          resolve()
+        }).catch(e => {
+          console.log(e)
+          reject(e)
+        })
       })
+    },
+    queryPlayLists ({commit}) {
+      const playLists = db.find('playLists')
+      commit('queryPlayLists', playLists)
     }
   }
 }

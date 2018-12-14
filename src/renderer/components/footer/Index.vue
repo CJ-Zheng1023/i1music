@@ -50,11 +50,15 @@
         })
         this.setAllowKeys(allowKeys)
       })
+      ipcRenderer.on('image-server-config', (e, port) => {
+        this.setImageServerPort(port)
+      })
       ipcRenderer.send('view-ready')
     },
     methods: {
       ...mapActions('Music', [
-        'setAllowKeys'
+        'setAllowKeys',
+        'setImageServerPort'
       ]),
       /**
        * 播放实时时更新进度条

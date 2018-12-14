@@ -35,12 +35,17 @@ function createWindow () {
     mainWindow = null
   })
 }
-server.start((port, allowKeys) => {
+server.startMusicServer((port, allowKeys) => {
   ipcMain.on('view-ready', e => {
     e.sender.send('music-server-config', {
       port,
       allowKeys
     })
+  })
+})
+server.startImageServer(port => {
+  ipcMain.on('view-ready', e => {
+    e.sender.send('image-server-config', port)
   })
 })
 

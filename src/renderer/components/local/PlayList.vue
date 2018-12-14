@@ -2,17 +2,14 @@
   <div class="play-list" ref="pageScroll">
     <div class="inner">
       <el-row :gutter="25">
-        <el-col :md="6" :xl="4">
+        <el-col :md="6" :xl="4" v-for="item in playLists" :key="item.id">
           <router-link to="/local/playlistdetail">
-            <div class="card" ref="test">
+            <div class="card">
               <div class="figure">
-                <img src="../../assets/images/1.jpeg" />
+                <img :src="imageServer + '/' + item.cover" />
                 <ul class="tags clearfix">
-                  <li class="tag-item">
-                    <a href="javascript:;">#hip hop</a>
-                  </li>
-                  <li class="tag-item">
-                    <a href="javascript:;">#R&B</a>
+                  <li class="tag-item" v-for="tag in item.tags">
+                    <a href="javascript:;">{{tag}}</a>
                   </li>
                 </ul>
                 <div class="btn-wrapper">
@@ -20,109 +17,13 @@
                 </div>
               </div>
               <h3 class="name">
-                <span>Eminem全专辑</span>
+                <span>{{item.title}}</span>
                 <div class="actions">
                   <i class="iconfont icon-delete"></i>
                 </div>
               </h3>
             </div>
           </router-link>
-        </el-col>
-        <el-col :md="6" :xl="4">
-          <div class="card">
-            <div class="figure">
-              <img src="../../assets/images/2.jpeg" />
-              <ul class="tags clearfix">
-                <li class="tag-item">
-                  <a href="javascript:;">#rock</a>
-                </li>
-              </ul>
-              <div class="btn-wrapper">
-                <i class="iconfont icon-play"></i>
-              </div>
-            </div>
-            <h3 class="name">
-              <span>FTIland全集</span>
-              <div class="actions">
-                <i class="iconfont icon-delete"></i>
-              </div>
-            </h3>
-          </div>
-        </el-col>
-        <el-col :md="6" :xl="4">
-          <div class="card">
-            <div class="figure">
-              <img src="../../assets/images/3.jpeg" />
-              <ul class="tags clearfix">
-                <li class="tag-item">
-                  <a href="javascript:;">#ballad</a>
-                </li>
-                <li class="tag-item">
-                  <a href="javascript:;">#R&B</a>
-                </li>
-              </ul>
-              <div class="btn-wrapper">
-                <i class="iconfont icon-play"></i>
-              </div>
-            </div>
-            <h3 class="name">
-              <span>eddy kim</span>
-              <div class="actions">
-                <i class="iconfont icon-delete"></i>
-              </div>
-            </h3>
-          </div>
-        </el-col>
-        <el-col :md="6" :xl="4">
-          <div class="card">
-            <div class="figure">
-              <img src="../../assets/images/4.jpeg" />
-              <ul class="tags clearfix">
-                <li class="tag-item">
-                  <a href="javascript:;">#hip hop</a>
-                </li>
-              </ul>
-              <div class="btn-wrapper">
-                <i class="iconfont icon-play"></i>
-              </div>
-            </div>
-            <h3 class="name">
-              <span>dok2</span>
-              <div class="actions">
-                <i class="iconfont icon-delete"></i>
-              </div>
-            </h3>
-          </div>
-        </el-col>
-        <el-col :md="6" :xl="4">
-          <div class="card">
-            <div class="figure">
-              <img src="../../assets/images/2.jpeg" />
-              <ul class="tags clearfix">
-                <li class="tag-item">
-                  <a href="javascript:;">#hip hop</a>
-                </li>
-                <li class="tag-item">
-                  <a href="javascript:;">#R&B</a>
-                </li>
-              </ul>
-              <div class="btn-wrapper">
-                <i class="iconfont icon-play"></i>
-              </div>
-            </div>
-            <h3 class="name">
-              <span>nafla&loopy</span>
-              <div class="actions">
-                <i class="iconfont icon-delete"></i>
-              </div>
-            </h3>
-          </div>
-        </el-col>
-        <el-col :md="6" :xl="4">
-          <div class="card card-create" @click="openDialog">
-            <div class="figure"></div>
-            <i class="iconfont icon-create1"></i>
-          </div>
         </el-col>
       </el-row>
     </div>
@@ -159,7 +60,7 @@
 </template>
 <script>
   import {remote} from 'electron'
-  import {mapState, mapActions} from 'vuex'
+  import {mapState, mapGetters, mapActions} from 'vuex'
   export default {
     data () {
       return {
@@ -181,7 +82,11 @@
     },
     computed: {
       ...mapState('Music', [
-        'allowKeys'
+        'allowKeys',
+        'playLists'
+      ]),
+      ...mapGetters('Music', [
+        'imageServer'
       ]),
       chosenMusicArray () {
         return Array.from(this.chosenMusicSet)
@@ -231,9 +136,10 @@
             this.addPlayList({
               title: this.playListForm.title,
               tags: this.playListForm.tags,
-              musicList: this.chosenMusicArray
+              musicPaths: this.chosenMusicArray
+            }).then(() => {
+              this.closeDialog()
             })
-            this.closeDialog()
           }
         })
       },
@@ -243,7 +149,8 @@
         this.chosenMusicSet = new Set()
       },
       ...mapActions('Music', [
-        'addPlayList'
+        'addPlayList',
+        'queryPlayLists'
       ])
     },
     mounted () {
@@ -261,6 +168,7 @@
           }
         })
       })
+      this.queryPlayLists()
     }
   }
 </script>
