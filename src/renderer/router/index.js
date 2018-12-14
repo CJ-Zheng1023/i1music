@@ -23,7 +23,7 @@ let router = new Router({
           component: () => import('@/components/local/PlayList')
         },
         {
-          path: 'playlistdetail',
+          path: 'playlistdetail/:id',
           name: 'PlayListDetail',
           component: () => import('@/components/local/PlayListDetail')
         }

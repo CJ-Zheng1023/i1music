@@ -7,10 +7,27 @@ export default {
   defaults (document) {
     _db.defaults(document).write()
   },
-  push (table, data) {
-    _db.get(table).push(data).write()
+  push (table, data, where, to) {
+    if (where && !to) {
+      _db.get(table).find(where).push(data).write()
+    } else if (where && to) {
+      _db.get(table).find(where).get(to).push(data).write()
+    } else {
+      _db.get(table).push(data).write()
+    }
   },
-  find (table, data) {
-    return data ? _db.get(table).find(data).value() : _db.get(table).value()
+  pushAll (table, data, where, to) {
+    let result = _db.get(table).find(where).get(to).push(...data).write()
+    return formatData(result)
+  },
+  find (table, where) {
+    let result
+    result = where ? _db.get(table).find(where).value() : _db.get(table).value()
+    return formatData(result)
+  },
+  remove (table, where) {
+    _db.get(table).remove(where).write()
   }
 }
+// 去除lowdb查出来的数据里附带的observer
+const formatData = (data) => JSON.parse(JSON.stringify(data))

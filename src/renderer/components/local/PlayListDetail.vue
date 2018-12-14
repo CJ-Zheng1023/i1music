@@ -5,14 +5,11 @@
       <el-col :md="9">
         <div class="info">
           <div class="figure">
-            <img src="../../assets/images/1.jpeg"/>
+            <img :src="imageServer + '/' + playListInfo.cover"/>
           </div>
           <ul class="tags">
-            <li class="tag-item">
-              <a href="javascript:;">#Hip Hop</a>
-            </li>
-            <li class="tag-item">
-              <a href="javascript:;">#R&B</a>
+            <li class="tag-item" v-for="item in playListTag">
+              <a href="javascript:;"># {{item}}</a>
             </li>
           </ul>
         </div>
@@ -20,22 +17,22 @@
       <el-col :md="15">
         <div class="panel">
           <div class="panel-header clearfix">
-            <h3 class="title">Eminem全专辑</h3>
+            <h3 class="title">{{playListInfo.title}}</h3>
             <div class="actions">
-              <a href="javascript:;" class="btn btn-primary">
+              <a href="javascript:;" class="btn" @click="chooseMusic">
                 <i class="iconfont icon-add"></i>
               </a>
-              <a href="javascript:;" class="btn btn-danger">
+              <a href="javascript:;" class="btn" @click="deletePlayList">
                 <i class="iconfont icon-delete"></i>
               </a>
             </div>
           </div>
           <div class="panel-body">
-            <el-table :data="musicList" header-row-class-name="i-table-header">
+            <el-table :data="playListMusic" current-row-key="title" header-row-class-name="i-table-header">
               <el-table-column type="index" :index="indexMethod"></el-table-column>
-              <el-table-column prop="song" label="歌曲" sortable></el-table-column>
-              <el-table-column prop="singer" label="歌手"></el-table-column>
-              <el-table-column prop="time" label="时长"></el-table-column>
+              <el-table-column prop="title" label="歌曲" sortable></el-table-column>
+              <el-table-column prop="artist" label="歌手"></el-table-column>
+              <el-table-column prop="duration" label="时长"></el-table-column>
             </el-table>
           </div>
         </div>
@@ -45,49 +42,63 @@
   </div>
 </template>
 <script>
+  import {remote} from 'electron'
+  import {mapState, mapGetters, mapActions} from 'vuex'
   export default {
     data () {
       return {
-        musicList: [
-          {
-            song: 'song1',
-            singer: 'singer1',
-            time: '4:05'
-          },
-          {
-            song: 'song2',
-            singer: 'singer2',
-            time: '3:22'
-          },
-          {
-            song: 'song3',
-            singer: 'singer3',
-            time: '5:00'
-          },
-          {
-            song: 'song1',
-            singer: 'singer1',
-            time: '4:05'
-          },
-          {
-            song: 'song2',
-            singer: 'singer2',
-            time: '3:22'
-          },
-          {
-            song: 'song3',
-            singer: 'singer3',
-            time: '5:00'
-          }
-        ]
+        chosenMusicSet: new Set()
+      }
+    },
+    computed: {
+      ...mapState('Music', [
+        'playListInfo',
+        'playListMusic',
+        'playListTag',
+        'allowKeys'
+      ]),
+      ...mapGetters('Music', [
+        'imageServer'
+      ]),
+      chosenMusicArray () {
+        return Array.from(this.chosenMusicSet)
       }
     },
     methods: {
       indexMethod (index) {
         return index + 1
-      }
+      },
+      chooseMusic () {
+        remote.dialog.showOpenDialog({
+          title: '选择音乐',
+          filters: [
+            {
+              name: 'music',
+              extensions: this.allowKeys
+            }
+          ],
+          properties: ['openFile', 'multiSelections']
+        }, filePaths => {
+          if (filePaths) {
+            this.chosenMusicSet = new Set([...this.chosenMusicSet, ...filePaths])
+            this.addMusic({musicPaths: this.chosenMusicArray, id: this.$route.params.id}).catch(e => {
+              console.log(e)
+            })
+          }
+        })
+      },
+      deletePlayList () {
+        this.removePlayList(this.$route.params.id)
+        this.$router.push({path: '/local'})
+      },
+      ...mapActions('Music', [
+        'queryPlayListDetail',
+        'addMusic',
+        'removePlayList'
+      ])
     },
     mounted () {
+      this.queryPlayListDetail(this.$route.params.id)
       this.$nextTick(() => {
         this.scroll = new this.$BScroll(this.$refs.scroll, {
           probeType: 1,
@@ -162,10 +173,13 @@
     padding: 2px 4px;
     box-sizing: border-box;
     border-radius: 2px;
-    border: 1px solid #dcdfe6;
+    // border: 1px solid #dcdfe6;
     color: #dcdfe6;
     font-size: 16px;
     margin: 3px;
+    &:hover{
+      background-color: rgba(0, 0, 0, .2);
+    }
     i{
       font-size: 15px;
     }

@@ -3,7 +3,7 @@
     <div class="inner">
       <el-row :gutter="25">
         <el-col :md="6" :xl="4" v-for="item in playLists" :key="item.id">
-          <router-link to="/local/playlistdetail">
+          <router-link :to="'/local/playlistdetail/' + item.id">
             <div class="card">
               <div class="figure">
                 <img :src="imageServer + '/' + item.cover" />
@@ -19,7 +19,7 @@
               <h3 class="name">
                 <span>{{item.title}}</span>
                 <div class="actions">
-                  <i class="iconfont icon-delete"></i>
+                  <i class="iconfont icon-delete" @click="deletePlayList(item.id, $event)"></i>
                 </div>
               </h3>
             </div>
@@ -151,6 +151,9 @@
               this.queryPlayLists()
               this.closeDialog()
               this.isLoading = false
+            }).catch(e => {
+              console.log(e)
+              this.isLoading = false
             })
           }
         })
@@ -160,9 +163,15 @@
         this.$refs['createForm'].resetFields()
         this.chosenMusicSet = new Set()
       },
+      deletePlayList (id, e) {
+        this.removePlayList(id)
+        this.queryPlayLists()
+        e.preventDefault()
+      },
       ...mapActions('Music', [
         'addPlayList',
-        'queryPlayLists'
+        'queryPlayLists',
+        'removePlayList'
       ])
     },
     mounted () {
