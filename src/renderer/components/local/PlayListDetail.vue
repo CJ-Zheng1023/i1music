@@ -5,7 +5,7 @@
       <el-col :md="9">
         <div class="info">
           <div class="figure">
-            <img :src="imageServer + '/' + playListInfo.cover"/>
+            <img :src="imageServer + encodeURIComponent(playListInfo.cover)"/>
           </div>
           <ul class="tags">
             <li class="tag-item" v-for="item in playListTag">
@@ -32,11 +32,11 @@
               <el-table-column width="120">
                 <template slot-scope="scope">
                   <div>{{scope.$index + 1}}</div>
-                  <a class="btn-play-list play" href="javascript:;" @click="playOrPauseMusic(scope.row, playListInfo.id)">
-                    <i class="iconfont icon-play"></i>
+                  <a :class="['btn-play-list', scope.row.isPlaying ? 'playing' : '']" href="javascript:;" @click="clickPlay(scope.row)">
+                    <i :class="['iconfont', scope.row.isPlaying ? 'icon-pause' : 'icon-play']"></i>
                   </a>
                   <a class="btn-play-list delete" href="javascript:;">
-                    <i class="iconfont icon-window-close"></i>
+                    <i class="iconfont icon-window-close" @click="clickDelete(scope.row.id)"></i>
                   </a>
                 </template>
               </el-table-column>
@@ -55,11 +55,6 @@
   import {remote} from 'electron'
   import {mapState, mapGetters, mapActions} from 'vuex'
   export default {
-    data () {
-      return {
-        chosenMusicSet: new Set()
-      }
-    },
     computed: {
       ...mapState('Music', [
         'playListInfo',
@@ -69,14 +64,22 @@
       ]),
       ...mapGetters('Music', [
         'imageServer'
-      ]),
-      chosenMusicArray () {
-        return Array.from(this.chosenMusicSet)
-      }
+      ])
     },
     methods: {
-      playOrPauseMusic (music, playListId) {
-        console.log(music, playListId)
+      clickPlay (music) {
+        this.prepareToPlay({
+          album: music.album,
+          artist: music.artist,
+          id: music.id,
+          duration: music.duration,
+          path: music.path,
+          title: music.title,
+          playListId: this.playListInfo.id
+        })
+      },
+      clickDelete (musicId) {
+        this.removeMusic({musicId, playListId: this.playListInfo.id})
       },
       chooseMusic () {
         remote.dialog.showOpenDialog({
@@ -90,8 +93,7 @@
           properties: ['openFile', 'multiSelections']
         }, filePaths => {
           if (filePaths) {
-            this.chosenMusicSet = new Set([...this.chosenMusicSet, ...filePaths])
-            this.addMusic({musicPaths: this.chosenMusicArray, id: this.$route.params.id}).catch(e => {
+            this.addMusic({musicPaths: filePaths, id: this.$route.params.id}).catch(e => {
               console.log(e)
             })
           }
@@ -104,7 +106,9 @@
       ...mapActions('Music', [
         'queryPlayListDetail',
         'addMusic',
-        'removePlayList'
+        'removePlayList',
+        'prepareToPlay',
+        'removeMusic'
       ])
     },
     mounted () {
@@ -207,6 +211,9 @@
     &.delete{
       left: -@btn-play-list-width;
       background: linear-gradient(to right, #f2994a, #f2c94c);
+    }
+    &.playing{
+      left: 0;
     }
     i{
       position: absolute;

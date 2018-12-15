@@ -6,7 +6,7 @@
           <router-link :to="'/local/playlistdetail/' + item.id">
             <div class="card">
               <div class="figure">
-                <img :src="imageServer + '/' + item.cover" />
+                <img :src="imageServer + encodeURIComponent(item.cover)" />
                 <ul class="tags clearfix">
                   <li class="tag-item" v-for="tag in item.tags">
                     <a href="javascript:;"># {{tag}}</a>

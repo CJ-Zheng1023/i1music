@@ -1,7 +1,7 @@
 <template>
   <footer>
     <div class="inner">
-      <audio :src="musicServer" crossorigin="anonymous" ref="audio"></audio>
+      <audio :src="musicServer + encodeURIComponent(playingMusic.path)" crossorigin="anonymous" ref="audio"></audio>
       <div class="btns" >
         <i class="iconfont icon-step-backward"></i>
         <i :class="['iconfont', isPlaying ? 'icon-pause' : 'icon-play']" @click="playOrPause"></i>
@@ -9,11 +9,11 @@
       </div>
       <div class="progress">
         <div class="figure">
-          <img src="../../assets/images/1.jpeg" />
+          <img :src="imageServer + encodeURIComponent(playingMusic.path)" />
         </div>
         <div class="figcation">
           <div class="music-info">
-            Eminem-The Way I Am
+            {{playingMusic.artist}}-{{playingMusic.title}}
           </div>
           <div class="bar" @click="clickProcessBar" ref="bar">
             <div class="percentage" :style="{width: percentage + '%'}"></div>
@@ -30,20 +30,30 @@
 </template>
 <script>
   import {ipcRenderer} from 'electron'
-  import {mapActions} from 'vuex'
+  import {mapState, mapGetters, mapActions} from 'vuex'
   export default {
     data () {
       return {
-        musicServer: '',
         animationId: '',
         isPlaying: false,
-        percentage: 0
+        percentage: 0,
+        musicServerPort: 0
+      }
+    },
+    computed: {
+      ...mapState('Music', [
+        'playingMusic'
+      ]),
+      ...mapGetters('Music', [
+        'imageServer'
+      ]),
+      musicServer () {
+        return `http://localhost:${this.musicServerPort}/`
       }
     },
     created () {
       ipcRenderer.on('music-server-config', (e, {port, allowKeys}) => {
-        let filePath = 'E:/music/Stray Kids-극과 극.wav'
-        this.musicServer = `http://localhost:${port}/${encodeURIComponent(filePath)}`
+        this.musicServerPort = port
         // 去掉点，并存入vuex，用于后续创建歌单导入音乐时限定文件格式
         allowKeys.forEach((item, index) => {
           allowKeys[index] = item.replace('.', '')
@@ -92,13 +102,15 @@
       playOrPause () {
         const audio = this.$refs.audio
         if (audio.paused || audio.ended) {
-          audio.play()
-          this._drawProcessBar()
-          this.isPlaying = true
+          audio.play().then(() => {
+            this._drawProcessBar()
+            this.isPlaying = true
+          })
         } else {
           audio.pause()
-          this._stopDrawProcessBar()
-          this.isPlaying = false
+          this._stopDrawProcessBar(() => {
+            this.isPlaying = false
+          })
         }
       }
     }

@@ -36,7 +36,7 @@ export default {
     sec = sec < 10 ? `0${sec}` : sec
     return `${min}:${sec}`
   },
-  // 去除lowdb查出来的数据里附带的observer
+  // 转成json对象
   formatData (data) {
     return JSON.parse(JSON.stringify(data))
   }

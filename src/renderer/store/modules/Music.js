@@ -18,7 +18,7 @@ export default {
   },
   getters: {
     imageServer (state) {
-      return `http://localhost:${state.imageServerPort}`
+      return `http://localhost:${state.imageServerPort}/`
     }
   },
   mutations: {
@@ -35,6 +35,7 @@ export default {
       state.playListInfo = info
     },
     setPlayListMusic (state, musicList) {
+      setPlaying(musicList, state.playingMusic.id)
       state.playListMusic = musicList
     },
     setPlayListTag (state, tags) {
@@ -46,9 +47,7 @@ export default {
     },
     // 设置歌曲列表的播放状态
     setPlayingStatus (state, musicId) {
-      state.playListMusic.forEach(music => {
-        music['isPlaying'] = music.id === musicId
-      })
+      setPlaying(state.playListMusic, musicId)
     }
   },
   actions: {
@@ -58,6 +57,7 @@ export default {
     setImageServerPort ({commit}, port) {
       commit('setImageServerPort', port)
     },
+    // 新建歌单
     addPlayList ({commit}, playList) {
       const musicPaths = playList['musicPaths']
       return parseMusicFile(musicPaths).then(({musicList, cover}) => {
@@ -93,6 +93,7 @@ export default {
         commit('setPlayListMusic', playListMusic)
       })
     },
+    // 删除歌单
     removePlayList ({commit}, id) {
       db.get('playLists').remove({id}).write()
     },
@@ -100,6 +101,14 @@ export default {
     prepareToPlay ({commit}, music) {
       commit('setPlayingMusic', music)
       commit('setPlayingStatus', music.id)
+    },
+    // 在歌单详情删除音乐
+    removeMusic ({commit}, {musicId, playListId}) {
+      let musicListDB = db.get('playLists').find({id: playListId}).get('musicList')
+      musicListDB.remove({id: musicId}).write()
+      let result = musicListDB.value()
+      let playListMusic = utils.formatData(result)
+      commit('setPlayListMusic', playListMusic)
     }
   }
 }
@@ -131,5 +140,15 @@ const parseMusicFile = paths => {
       Object.assign(musicList[index], data)
     })
     return {musicList, cover}
+  })
+}
+/**
+ * 设置音乐播放状态
+ * @param musicList    音乐列表
+ * @param musicId      需要设置状态的音乐ID   （播放/暂停状态）
+ */
+const setPlaying = (musicList, musicId) => {
+  musicList.forEach(music => {
+    music['isPlaying'] = music.id === musicId && !music['isPlaying']
   })
 }
