@@ -29,10 +29,20 @@
           </div>
           <div class="panel-body">
             <el-table :data="playListMusic" current-row-key="title" header-row-class-name="i-table-header">
-              <el-table-column type="index" :index="indexMethod"></el-table-column>
+              <el-table-column width="120">
+                <template slot-scope="scope">
+                  <div>{{scope.$index + 1}}</div>
+                  <a class="btn-play-list play" href="javascript:;" @click="playOrPauseMusic(scope.row, playListInfo.id)">
+                    <i class="iconfont icon-play"></i>
+                  </a>
+                  <a class="btn-play-list delete" href="javascript:;">
+                    <i class="iconfont icon-window-close"></i>
+                  </a>
+                </template>
+              </el-table-column>
               <el-table-column prop="title" label="歌曲" sortable></el-table-column>
               <el-table-column prop="artist" label="歌手"></el-table-column>
-              <el-table-column prop="duration" label="时长"></el-table-column>
+              <el-table-column prop="duration" label="时长" width="100"></el-table-column>
             </el-table>
           </div>
         </div>
@@ -65,8 +75,8 @@
       }
     },
     methods: {
-      indexMethod (index) {
-        return index + 1
+      playOrPauseMusic (music, playListId) {
+        console.log(music, playListId)
       },
       chooseMusic () {
         remote.dialog.showOpenDialog({
@@ -165,43 +175,52 @@
         position: absolute;
         right: 0;
         top: 0;
+        .btn{
+          display: inline-block;
+          padding: 2px 4px;
+          box-sizing: border-box;
+          border-radius: 2px;
+          // border: 1px solid #dcdfe6;
+          color: #dcdfe6;
+          font-size: 16px;
+          margin: 3px;
+          &:hover{
+            background-color: rgba(0, 0, 0, .2);
+          }
+          i{
+            font-size: 15px;
+          }
+        }
       }
     }
   }
-  .btn{
-    display: inline-block;
-    padding: 2px 4px;
-    box-sizing: border-box;
-    border-radius: 2px;
-    // border: 1px solid #dcdfe6;
-    color: #dcdfe6;
-    font-size: 16px;
-    margin: 3px;
-    &:hover{
-      background-color: rgba(0, 0, 0, .2);
+  @btn-play-list-width: 50px;
+  .btn-play-list{
+    position: absolute;
+    color: #fff;
+    left: -@btn-play-list-width * 2;
+    top: 0;
+    height: 100%;
+    width: @btn-play-list-width;
+    background: linear-gradient(to right, #d66d75, #e29587);
+    transition: left .5s;
+    &.delete{
+      left: -@btn-play-list-width;
+      background: linear-gradient(to right, #f2994a, #f2c94c);
     }
     i{
-      font-size: 15px;
+      position: absolute;
+      font-size: 18px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
     }
-    &.btn-primary{
-      background-color: #33a0e1;
-      border-color: #33a0e1;
-      &:hover{
-        background-color: #38b2f9;
-      }
-    }
-    &.btn-danger{
-      background-color: #dc231f;
-      border-color: #dc231f;
-      &:hover{
-        background-color: #fb2824;
-      }
-    }
-    &.btn-default{
-      background-color: #8d8d92;
-      border-color: #8d8d92;
-      &:hover{
-        background-color: #b3b3b9;
+  }
+  .el-table tbody tr:hover{
+    .btn-play-list{
+      left: 0;
+      &.delete{
+        left: @btn-play-list-width;
       }
     }
   }

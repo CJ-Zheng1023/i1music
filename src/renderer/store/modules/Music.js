@@ -12,7 +12,8 @@ export default {
       imageServerPort: 0,
       playListInfo: {},
       playListMusic: [],
-      playListTag: []
+      playListTag: [],
+      playingMusic: {}
     }
   },
   getters: {
@@ -38,6 +39,16 @@ export default {
     },
     setPlayListTag (state, tags) {
       state.playListTag = tags
+    },
+    // 设置当前播放的歌曲
+    setPlayingMusic (state, music) {
+      state.playingMusic = music
+    },
+    // 设置歌曲列表的播放状态
+    setPlayingStatus (state, musicId) {
+      state.playListMusic.forEach(music => {
+        music['isPlaying'] = music.id === musicId
+      })
     }
   },
   actions: {
@@ -84,6 +95,11 @@ export default {
     },
     removePlayList ({commit}, id) {
       db.get('playLists').remove({id}).write()
+    },
+    // 配置各种状态值
+    prepareToPlay ({commit}, music) {
+      commit('setPlayingMusic', music)
+      commit('setPlayingStatus', music.id)
     }
   }
 }
