@@ -40,6 +40,12 @@
         musicServerPort: 0
       }
     },
+    watch: {
+      playingMusic () {
+        this._stopDrawProcessBar()
+        this.playOrPause()
+      }
+    },
     computed: {
       ...mapState('Music', [
         'playingMusic'
@@ -102,13 +108,15 @@
       playOrPause () {
         const audio = this.$refs.audio
         if (audio.paused || audio.ended) {
-          audio.play().then(() => {
+          this.$nextTick(() => {
+            audio.play()
             this._drawProcessBar()
             this.isPlaying = true
           })
         } else {
-          audio.pause()
-          this._stopDrawProcessBar(() => {
+          this.$nextTick(() => {
+            audio.pause()
+            this._stopDrawProcessBar()
             this.isPlaying = false
           })
         }
