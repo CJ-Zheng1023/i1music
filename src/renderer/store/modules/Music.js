@@ -13,7 +13,9 @@ export default {
       playListInfo: {},
       playListMusic: [],
       playListTag: [],
-      playingMusic: {}
+      playingMusic: {},
+      // 指令标志位，分为flag和play+musicId（用来控制footer播放面板暂停和播放按钮。在footer组建里监听该值，执行播放或暂停）
+      flag: 'pause'
     }
   },
   getters: {
@@ -48,6 +50,9 @@ export default {
     // 设置歌曲列表的播放状态
     setPlayingStatus (state, musicId) {
       setPlaying(state.playListMusic, musicId)
+    },
+    setFlag (state, flag) {
+      state.flag = flag
     }
   },
   actions: {
@@ -99,7 +104,17 @@ export default {
     },
     // 配置各种状态值
     prepareToPlay ({commit}, music) {
+      let flag = ''
       commit('setPlayingMusic', music)
+      if (music.isPlaying) {
+        // 暂停指令
+        flag = 'pause'
+      } else {
+        // 播放指令
+        flag = `play${music.id}`
+      }
+      // 设置播放或暂停指令，用于控制footer组件播放和暂停按钮
+      commit('setFlag', flag)
       commit('setPlayingStatus', music.id)
     },
     // 在歌单详情删除音乐

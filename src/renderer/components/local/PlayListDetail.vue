@@ -75,7 +75,8 @@
           duration: music.duration,
           path: music.path,
           title: music.title,
-          playListId: this.playListInfo.id
+          playListId: this.playListInfo.id,
+          isPlaying: music.isPlaying
         })
       },
       clickDelete (musicId) {

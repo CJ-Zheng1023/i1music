@@ -41,14 +41,28 @@
       }
     },
     watch: {
-      playingMusic () {
-        this._stopDrawProcessBar()
-        this.playOrPause()
+      flag (newValue, oldValue) {
+        const audio = this.$refs.audio
+        if (newValue === 'pause') {
+          // 加延迟，等音频文件就绪
+          this.$nextTick(() => {
+            audio.pause()
+            this._stopDrawProcessBar()
+            this.isPlaying = false
+          })
+        } else {
+          this.$nextTick(() => {
+            audio.play()
+            this._drawProcessBar()
+            this.isPlaying = true
+          })
+        }
       }
     },
     computed: {
       ...mapState('Music', [
-        'playingMusic'
+        'playingMusic',
+        'flag'
       ]),
       ...mapGetters('Music', [
         'imageServer'
@@ -108,17 +122,13 @@
       playOrPause () {
         const audio = this.$refs.audio
         if (audio.paused || audio.ended) {
-          this.$nextTick(() => {
-            audio.play()
-            this._drawProcessBar()
-            this.isPlaying = true
-          })
+          audio.play()
+          this._drawProcessBar()
+          this.isPlaying = true
         } else {
-          this.$nextTick(() => {
-            audio.pause()
-            this._stopDrawProcessBar()
-            this.isPlaying = false
-          })
+          audio.pause()
+          this._stopDrawProcessBar()
+          this.isPlaying = false
         }
       }
     }
