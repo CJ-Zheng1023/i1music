@@ -15,7 +15,9 @@ export default {
       playListTag: [],
       playingMusic: {},
       // 指令标志位，分为flag和play+musicId（用来控制footer播放面板暂停和播放按钮。在footer组建里监听该值，执行播放或暂停）
-      flag: 'pause'
+      flag: 'pause',
+      // 播放模式   single单曲循环 shuffle随机播放 cycle循环播放
+      playMode: 'cycle'
     }
   },
   getters: {
@@ -37,7 +39,7 @@ export default {
       state.playListInfo = info
     },
     setPlayListMusic (state, musicList) {
-      setPlaying(musicList, state.playingMusic.id)
+      setPlaying(musicList, state.playingMusic.id, state.playingMusic.isPlaying)
       state.playListMusic = musicList
     },
     setPlayListTag (state, tags) {
@@ -49,10 +51,23 @@ export default {
     },
     // 设置歌曲列表的播放状态
     setPlayingStatus (state, musicId) {
-      setPlaying(state.playListMusic, musicId)
+      setPlaying(state.playListMusic, musicId, state.playingMusic.isPlaying)
+    },
+    setPlayingMusicStatus (state) {
+      state.playingMusic.isPlaying = !state.playingMusic.isPlaying
     },
     setFlag (state, flag) {
       state.flag = flag
+    },
+    setPlayMode (state) {
+      let currentMode = state.playMode
+      if (currentMode === 'cycle') {
+        state.playMode = 'shuffle'
+      } else if (currentMode === 'shuffle') {
+        state.playMode = 'single'
+      } else if (currentMode === 'single') {
+        state.playMode = 'cycle'
+      }
     }
   },
   actions: {
@@ -105,6 +120,7 @@ export default {
     // 配置各种状态值
     prepareToPlay ({commit}, music) {
       let flag = ''
+      // 缓存待播放音乐信息
       commit('setPlayingMusic', music)
       if (music.isPlaying) {
         // 暂停指令
@@ -115,7 +131,14 @@ export default {
       }
       // 设置播放或暂停指令，用于控制footer组件播放和暂停按钮
       commit('setFlag', flag)
-      commit('setPlayingStatus', music.id)
+    },
+    // 设置播放列表播放/暂停状态
+    setPlayingStatus ({commit}, musicId) {
+      commit('setPlayingStatus', musicId)
+    },
+    // 修改待播放音乐信息状态
+    setPlayingMusicStatus ({commit}) {
+      commit('setPlayingMusicStatus')
     },
     // 在歌单详情删除音乐
     removeMusic ({commit}, {musicId, playListId}) {
@@ -124,6 +147,9 @@ export default {
       let result = musicListDB.value()
       let playListMusic = utils.formatData(result)
       commit('setPlayListMusic', playListMusic)
+    },
+    setPlayMode ({commit}) {
+      commit('setPlayMode')
     }
   }
 }
@@ -161,9 +187,10 @@ const parseMusicFile = paths => {
  * 设置音乐播放状态
  * @param musicList    音乐列表
  * @param musicId      需要设置状态的音乐ID   （播放/暂停状态）
+ * @param isPlaying    播放器的播放状态
  */
-const setPlaying = (musicList, musicId) => {
+const setPlaying = (musicList, musicId, isPlaying) => {
   musicList.forEach(music => {
-    music['isPlaying'] = music.id === musicId && !music['isPlaying']
+    music['isPlaying'] = music.id === musicId && isPlaying && !music['isPlaying']
   })
 }

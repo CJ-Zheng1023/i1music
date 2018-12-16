@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="controls">
-        <i class="iconfont icon-cycle"></i>
+        <i :class="['iconfont', playModeClass]" @click="changePlayMode"></i>
         <i class="iconfont icon-volume-on"></i>
         <i class="iconfont icon-play-list"></i>
       </div>
@@ -57,18 +57,24 @@
             this.isPlaying = true
           })
         }
+        this.setPlayingMusicStatus()
+        this.setPlayingStatus(this.playingMusic.id)
       }
     },
     computed: {
       ...mapState('Music', [
         'playingMusic',
-        'flag'
+        'flag',
+        'playMode'
       ]),
       ...mapGetters('Music', [
         'imageServer'
       ]),
       musicServer () {
         return `http://localhost:${this.musicServerPort}/`
+      },
+      playModeClass () {
+        return `icon-${this.playMode}`
       }
     },
     created () {
@@ -88,8 +94,14 @@
     methods: {
       ...mapActions('Music', [
         'setAllowKeys',
-        'setImageServerPort'
+        'setImageServerPort',
+        'setPlayMode',
+        'setPlayingStatus',
+        'setPlayingMusicStatus'
       ]),
+      changePlayMode () {
+        this.setPlayMode()
+      },
       /**
        * 播放实时时更新进度条
        * @private
@@ -130,6 +142,8 @@
           this._stopDrawProcessBar()
           this.isPlaying = false
         }
+        this.setPlayingMusicStatus()
+        this.setPlayingStatus(this.playingMusic.id)
       }
     }
   }
