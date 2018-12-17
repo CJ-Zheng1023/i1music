@@ -12,7 +12,7 @@
                     <a href="javascript:;"># {{tag}}</a>
                   </li>
                 </ul>
-                <div class="btn-wrapper">
+                <div class="btn-wrapper" @click="play(item.id, $event)">
                   <i class="iconfont icon-play"></i>
                 </div>
               </div>
@@ -90,10 +90,15 @@
     computed: {
       ...mapState('Music', [
         'allowKeys',
-        'playLists'
+        'playLists',
+        'playingMusic',
+        'playMode',
+        'playListInfo',
+        'playListMusic'
       ]),
       ...mapGetters('Music', [
-        'imageServer'
+        'imageServer',
+        'shuffled'
       ]),
       chosenMusicArray () {
         return Array.from(this.chosenMusicSet)
@@ -165,13 +170,63 @@
       },
       deletePlayList (id, e) {
         this.removePlayList(id)
+        this.stopPlay()
         this.queryPlayLists()
+        e.preventDefault()
+      },
+      play (id, e) {
+        this.queryPlayListDetail(id)
+        // 如果歌单没有歌曲，则不执行播放操作
+        if (this.playListMusic.length === 0) {
+          return
+        }
+        let resultMusic = {}
+        if (this.playMode === 'shuffle') {
+          let musicId = this.shuffled[0]
+          for (let i = 0, len = this.playListMusic.length; i < len; i++) {
+            let music = this.playListMusic[i]
+            if (musicId === music.id) {
+              resultMusic = {
+                album: music.album,
+                artist: music.artist,
+                id: music.id,
+                duration: music.duration,
+                path: music.path,
+                title: music.title,
+                playListId: this.playListInfo.id,
+                isPlaying: false
+              }
+              break
+            }
+          }
+        } else {
+          resultMusic = {
+            album: this.playListMusic[0].album,
+            artist: this.playListMusic[0].artist,
+            id: this.playListMusic[0].id,
+            duration: this.playListMusic[0].duration,
+            path: this.playListMusic[0].path,
+            title: this.playListMusic[0].title,
+            playListId: this.playListInfo.id,
+            isPlaying: false
+          }
+        }
+
+        if (resultMusic.id === this.playingMusic.id) {
+          this.reload()
+        } else {
+          this.prepareToPlay(resultMusic)
+        }
         e.preventDefault()
       },
       ...mapActions('Music', [
         'addPlayList',
         'queryPlayLists',
-        'removePlayList'
+        'removePlayList',
+        'queryPlayListDetail',
+        'prepareToPlay',
+        'reload',
+        'stopPlay'
       ])
     },
     mounted () {

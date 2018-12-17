@@ -60,7 +60,8 @@
         'playListInfo',
         'playListMusic',
         'playListTag',
-        'allowKeys'
+        'allowKeys',
+        'playingMusic'
       ]),
       ...mapGetters('Music', [
         'imageServer'
@@ -81,6 +82,9 @@
       },
       clickDelete (musicId) {
         this.removeMusic({musicId, playListId: this.playListInfo.id})
+        if (musicId === this.playingMusic.id) {
+          this.stopPlay()
+        }
       },
       chooseMusic () {
         remote.dialog.showOpenDialog({
@@ -102,6 +106,7 @@
       },
       deletePlayList () {
         this.removePlayList(this.$route.params.id)
+        this.stopPlay()
         this.$router.push({path: '/local'})
       },
       ...mapActions('Music', [
@@ -109,7 +114,8 @@
         'addMusic',
         'removePlayList',
         'prepareToPlay',
-        'removeMusic'
+        'removeMusic',
+        'stopPlay'
       ])
     },
     mounted () {

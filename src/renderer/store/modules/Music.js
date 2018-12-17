@@ -14,7 +14,7 @@ export default {
       playListMusic: [],
       playListTag: [],
       playingMusic: {},
-      // 指令标志位，分为flag和play+musicId（用来控制footer播放面板暂停和播放按钮。在footer组建里监听该值，执行播放或暂停）
+      // 指令标志位，分为flag,reload,stop和play+musicId（用来控制footer播放面板暂停和播放按钮。在footer组建里监听该值，执行播放或暂停）
       flag: 'pause',
       // 播放模式   single单曲循环 shuffle随机播放 cycle循环播放
       playMode: 'cycle'
@@ -23,6 +23,20 @@ export default {
   getters: {
     imageServer (state) {
       return `http://localhost:${state.imageServerPort}/`
+    },
+    // 打乱播放顺序，用于随机播放功能
+    shuffled (state) {
+      let array = []
+      let result = []
+      state.playListMusic.forEach(music => {
+        array.push(music.id)
+      })
+      while (array.length > 0) {
+        let index = parseInt(Math.random() * (array.length))
+        result.push(array[index])
+        array.splice(index, 1)
+      }
+      return result
     }
   },
   mutations: {
@@ -118,7 +132,7 @@ export default {
       db.get('playLists').remove({id}).write()
     },
     // 配置各种状态值
-    prepareToPlay ({commit}, music) {
+    prepareToPlay ({commit, state}, music) {
       let flag = ''
       // 缓存待播放音乐信息
       commit('setPlayingMusic', music)
@@ -131,6 +145,16 @@ export default {
       }
       // 设置播放或暂停指令，用于控制footer组件播放和暂停按钮
       commit('setFlag', flag)
+    },
+    // 停止播放
+    stopPlay ({commit}) {
+      commit('setPlayingMusic', {})
+      commit('setFlag', 'stop')
+    },
+    // 重新播放
+    reload ({commit}) {
+      // 给随机数为了在footer里触发
+      commit('setFlag', `reload${new Date().getMilliseconds()}`)
     },
     // 设置播放列表播放/暂停状态
     setPlayingStatus ({commit}, musicId) {

@@ -3,9 +3,9 @@
     <div class="inner">
       <audio :src="musicServer + encodeURIComponent(playingMusic.path)" crossorigin="anonymous" ref="audio"></audio>
       <div class="btns" >
-        <i class="iconfont icon-step-backward"></i>
+        <i class="iconfont icon-step-backward" @click="backward"></i>
         <i :class="['iconfont', isPlaying ? 'icon-pause' : 'icon-play']" @click="playOrPause"></i>
-        <i class="iconfont icon-step-forward"></i>
+        <i class="iconfont icon-step-forward" @click="forward"></i>
       </div>
       <div class="progress">
         <div class="figure">
@@ -13,7 +13,7 @@
         </div>
         <div class="figcation">
           <div class="music-info">
-            {{playingMusic.artist}}-{{playingMusic.title}}
+            {{musicInfo}}
           </div>
           <div class="bar" @click="clickProcessBar" ref="bar">
             <div class="percentage" :style="{width: percentage + '%'}"></div>
@@ -50,6 +50,15 @@
             this._stopDrawProcessBar()
             this.isPlaying = false
           })
+        } else if (newValue === 'stop') {
+          this.$nextTick(() => {
+            audio.pause()
+            this._stopDrawProcessBar()
+            this.percentage = 0
+            this.isPlaying = false
+          })
+        } else if (newValue.includes('reload')) {
+          audio.currentTime = 0
         } else {
           this.$nextTick(() => {
             audio.play()
@@ -65,16 +74,22 @@
       ...mapState('Music', [
         'playingMusic',
         'flag',
-        'playMode'
+        'playMode',
+        'playListMusic',
+        'playListInfo'
       ]),
       ...mapGetters('Music', [
-        'imageServer'
+        'imageServer',
+        'shuffled'
       ]),
       musicServer () {
         return `http://localhost:${this.musicServerPort}/`
       },
       playModeClass () {
         return `icon-${this.playMode}`
+      },
+      musicInfo () {
+        return this.playingMusic.id ? `${this.playingMusic.artist}-${this.playingMusic.title}` : '欢迎使用I1Music'
       }
     },
     created () {
@@ -91,13 +106,24 @@
       })
       ipcRenderer.send('view-ready')
     },
+    mounted () {
+      let audio = this.$refs.audio
+      audio.addEventListener('ended', () => {
+        if (this.playMode === 'single') {
+          audio.play()
+        } else {
+          this.forward()
+        }
+      })
+    },
     methods: {
       ...mapActions('Music', [
         'setAllowKeys',
         'setImageServerPort',
         'setPlayMode',
         'setPlayingStatus',
-        'setPlayingMusicStatus'
+        'setPlayingMusicStatus',
+        'prepareToPlay'
       ]),
       changePlayMode () {
         this.setPlayMode()
@@ -132,6 +158,10 @@
        * 播放/停止音乐
        */
       playOrPause () {
+        // 没有待播放的音乐不执行
+        if (!this.playingMusic.id) {
+          return
+        }
         const audio = this.$refs.audio
         if (audio.paused || audio.ended) {
           audio.play()
@@ -144,6 +174,118 @@
         }
         this.setPlayingMusicStatus()
         this.setPlayingStatus(this.playingMusic.id)
+      },
+      backward () {
+        // 没有待播放的音乐不执行
+        if (!this.playingMusic.id) {
+          return
+        }
+        let music = this._prevMusic()
+        this.prepareToPlay(music)
+      },
+      _prevMusic () {
+        if (this.playMode === 'shuffle') {
+          let prevIndex = 0
+          for (let i = 0, len = this.shuffled.length; i < len; i++) {
+            let musicId = this.shuffled[i]
+            if (musicId === this.playingMusic.id) {
+              prevIndex = i - 1 === -1 ? len - 1 : i - 1
+            }
+          }
+          let prevMusicId = this.shuffled[prevIndex]
+          let resultMusic = {}
+          for (let i = 0, len = this.playListMusic.length; i < len; i++) {
+            let music = this.playListMusic[i]
+            if (prevMusicId === music.id) {
+              resultMusic = {
+                album: music.album,
+                artist: music.artist,
+                id: music.id,
+                duration: music.duration,
+                path: music.path,
+                title: music.title,
+                playListId: this.playListInfo.id,
+                isPlaying: music.isPlaying
+              }
+              break
+            }
+          }
+          return resultMusic
+        } else {
+          let prevIndex = 0
+          for (let i = 0, len = this.playListMusic.length; i < len; i++) {
+            let music = this.playListMusic[i]
+            if (music.id === this.playingMusic.id) {
+              prevIndex = i - 1 === -1 ? len - 1 : i - 1
+            }
+          }
+          return {
+            album: this.playListMusic[prevIndex].album,
+            artist: this.playListMusic[prevIndex].artist,
+            id: this.playListMusic[prevIndex].id,
+            duration: this.playListMusic[prevIndex].duration,
+            path: this.playListMusic[prevIndex].path,
+            title: this.playListMusic[prevIndex].title,
+            playListId: this.playListInfo.id,
+            isPlaying: this.playListMusic[prevIndex].isPlaying
+          }
+        }
+      },
+      forward () {
+        // 没有待播放的音乐不执行
+        if (!this.playingMusic.id) {
+          return
+        }
+        let music = this._nextMusic()
+        this.prepareToPlay(music)
+      },
+      _nextMusic () {
+        if (this.playMode === 'shuffle') {
+          let nextIndex = 0
+          for (let i = 0, len = this.shuffled.length; i < len; i++) {
+            let musicId = this.shuffled[i]
+            if (musicId === this.playingMusic.id) {
+              nextIndex = i + 1 === len ? 0 : i + 1
+            }
+          }
+          let nextMusicId = this.shuffled[nextIndex]
+          let resultMusic = {}
+          for (let i = 0, len = this.playListMusic.length; i < len; i++) {
+            let music = this.playListMusic[i]
+            if (nextMusicId === music.id) {
+              resultMusic = {
+                album: music.album,
+                artist: music.artist,
+                id: music.id,
+                duration: music.duration,
+                path: music.path,
+                title: music.title,
+                playListId: this.playListInfo.id,
+                isPlaying: music.isPlaying
+              }
+              break
+            }
+          }
+          return resultMusic
+        } else {
+          let nextIndex = 0
+          for (let i = 0, len = this.playListMusic.length; i < len; i++) {
+            let music = this.playListMusic[i]
+            if (music.id === this.playingMusic.id) {
+              nextIndex = i + 1 === len ? 0 : i + 1
+            }
+          }
+          return {
+            album: this.playListMusic[nextIndex].album,
+            artist: this.playListMusic[nextIndex].artist,
+            id: this.playListMusic[nextIndex].id,
+            duration: this.playListMusic[nextIndex].duration,
+            path: this.playListMusic[nextIndex].path,
+            title: this.playListMusic[nextIndex].title,
+            playListId: this.playListInfo.id,
+            isPlaying: this.playListMusic[nextIndex].isPlaying
+          }
+        }
       }
     }
   }
