@@ -1,59 +1,62 @@
 <template>
   <div class="play-list-detail" ref="scroll">
-  <div class="inner">
-    <el-row :gutter="50">
-      <el-col :md="9">
-        <div class="info">
-          <div class="figure">
-            <img :src="imageServer + encodeURIComponent(playListInfo.cover)"/>
+    <div class="inner">
+      <el-row :gutter="50">
+        <el-col :md="9">
+          <div class="info">
+            <div class="figure">
+              <img :src="imageServer + encodeURIComponent(playListInfo.cover)"/>
+            </div>
+            <ul class="tags">
+              <li class="tag-item" v-for="item in playListTag">
+                <a href="javascript:;"># {{item}}</a>
+              </li>
+            </ul>
           </div>
-          <ul class="tags">
-            <li class="tag-item" v-for="item in playListTag">
-              <a href="javascript:;"># {{item}}</a>
-            </li>
-          </ul>
-        </div>
-      </el-col>
-      <el-col :md="15">
-        <div class="panel">
-          <div class="panel-header clearfix">
-            <h3 class="title">{{playListInfo.title}}</h3>
-            <div class="actions">
-              <a href="javascript:;" class="btn" @click="chooseMusic">
-                <i class="iconfont icon-add"></i>
-              </a>
-              <a href="javascript:;" class="btn" @click="deletePlayList">
-                <i class="iconfont icon-delete"></i>
-              </a>
+        </el-col>
+        <el-col :md="15">
+          <div class="panel">
+            <div class="panel-header clearfix">
+              <h3 class="title">{{playListInfo.title}}</h3>
+              <div class="actions">
+                <a href="javascript:;" class="btn" @click="chooseMusic">
+                  <i class="iconfont icon-add"></i>
+                </a>
+                <a href="javascript:;" class="btn" @click="deletePlayList">
+                  <i class="iconfont icon-delete"></i>
+                </a>
+              </div>
+            </div>
+            <div class="panel-body">
+              <el-table :data="playListMusic" current-row-key="title" header-row-class-name="i-table-header">
+                <el-table-column width="120">
+                  <template slot-scope="scope">
+                    <div>{{scope.$index + 1}}</div>
+                    <a :class="['btn-play-list', scope.row.isPlaying ? 'playing' : '']" href="javascript:;"
+                       @click="clickPlay(scope.row)">
+                      <i :class="['iconfont', scope.row.isPlaying ? 'icon-pause' : 'icon-play']"></i>
+                    </a>
+                    <a class="btn-play-list delete" href="javascript:;">
+                      <i class="iconfont icon-window-close" @click="clickDelete(scope.row.id)"></i>
+                    </a>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="title" label="歌曲" sortable></el-table-column>
+                <el-table-column prop="artist" label="歌手"></el-table-column>
+                <el-table-column prop="duration" label="时长" width="100"></el-table-column>
+              </el-table>
             </div>
           </div>
-          <div class="panel-body">
-            <el-table :data="playListMusic" current-row-key="title" header-row-class-name="i-table-header">
-              <el-table-column width="120">
-                <template slot-scope="scope">
-                  <div>{{scope.$index + 1}}</div>
-                  <a :class="['btn-play-list', scope.row.isPlaying ? 'playing' : '']" href="javascript:;" @click="clickPlay(scope.row)">
-                    <i :class="['iconfont', scope.row.isPlaying ? 'icon-pause' : 'icon-play']"></i>
-                  </a>
-                  <a class="btn-play-list delete" href="javascript:;">
-                    <i class="iconfont icon-window-close" @click="clickDelete(scope.row.id)"></i>
-                  </a>
-                </template>
-              </el-table-column>
-              <el-table-column prop="title" label="歌曲" sortable></el-table-column>
-              <el-table-column prop="artist" label="歌手"></el-table-column>
-              <el-table-column prop="duration" label="时长" width="100"></el-table-column>
-            </el-table>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
+        </el-col>
+      </el-row>
+      <div></div>
+    </div>
   </div>
 </template>
 <script>
-  import {remote} from 'electron'
-  import {mapState, mapGetters, mapActions} from 'vuex'
+  import { remote } from 'electron'
+  import { mapState, mapGetters, mapActions } from 'vuex'
+
   export default {
     computed: {
       ...mapState('Music', [
@@ -139,22 +142,24 @@
 </script>
 <style scoped lang="less">
   @import '../../common/styles/variable.less';
+
   @box-border-radius: 5px;
-  .play-list-detail{
+  .play-list-detail {
     height: 100%;
     overflow: hidden;
     position: relative;
     padding: 0 @app-lr-padding;
-    .inner{
+    .inner {
       padding: 30px 0;
     }
   }
-  .info{
-    .figure{
+
+  .info {
+    .figure {
       width: 100%;
       padding-bottom: 100%;
       position: relative;
-      img{
+      img {
         width: 100%;
         height: 100%;
         position: absolute;
@@ -163,30 +168,31 @@
         border-radius: @box-border-radius;
       }
     }
-    .tags{
+    .tags {
       margin: 10px 0;
     }
   }
-  .panel{
+
+  .panel {
     background-color: rgba(0, 0, 0, .25);
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 3px 0 rgba(0, 0, 0, 0.05);
     border-radius: @box-border-radius;
     padding: 15px 25px 25px 25px;
-    .panel-header{
+    .panel-header {
       position: relative;
       padding: 30px 30px;
-      .title{
+      .title {
         font-size: 16px;
         color: #fff;
         margin: 0;
         text-align: center;
       }
-      .actions{
+      .actions {
         position: absolute;
         right: 0;
         top: 0;
-        .btn{
+        .btn {
           display: inline-block;
           padding: 2px 4px;
           box-sizing: border-box;
@@ -195,18 +201,19 @@
           color: #dcdfe6;
           font-size: 16px;
           margin: 3px;
-          &:hover{
+          &:hover {
             background-color: rgba(0, 0, 0, .2);
           }
-          i{
+          i {
             font-size: 15px;
           }
         }
       }
     }
   }
+
   @btn-play-list-width: 50px;
-  .btn-play-list{
+  .btn-play-list {
     position: absolute;
     color: #fff;
     left: -@btn-play-list-width * 2;
@@ -215,14 +222,14 @@
     width: @btn-play-list-width;
     background: linear-gradient(to right, #d66d75, #e29587);
     transition: left .5s;
-    &.delete{
+    &.delete {
       left: -@btn-play-list-width;
       background: linear-gradient(to right, #f2994a, #f2c94c);
     }
-    &.playing{
+    &.playing {
       left: 0;
     }
-    i{
+    i {
       position: absolute;
       font-size: 18px;
       left: 50%;
@@ -230,10 +237,11 @@
       transform: translate(-50%, -50%);
     }
   }
-  .el-table tbody tr:hover{
-    .btn-play-list{
+
+  .el-table tbody tr:hover {
+    .btn-play-list {
       left: 0;
-      &.delete{
+      &.delete {
         left: @btn-play-list-width;
       }
     }

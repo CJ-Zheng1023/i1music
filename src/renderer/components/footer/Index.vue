@@ -22,9 +22,14 @@
       </div>
       <div class="controls">
         <i :class="['iconfont', playModeClass]" @click="changePlayMode"></i>
-        <i class="iconfont icon-volume-on"></i>
+        <i :class="['iconfont volume', volume === 0 ? 'icon-volume-off' : 'icon-volume-on']" @click="volumeControllerVisible = true">
+          <div class="volume-controller" v-show="volumeControllerVisible">
+            <el-slider v-model="volume" vertical height="120px"></el-slider>
+          </div>
+        </i>
         <i class="iconfont icon-play-list"></i>
       </div>
+      <div v-show="volumeControllerVisible" class="volume-controller-mask" @click="volumeControllerVisible = false"></div>
     </div>
   </footer>
 </template>
@@ -37,10 +42,16 @@
         animationId: '',
         isPlaying: false,
         percentage: 0,
-        musicServerPort: 0
+        musicServerPort: 0,
+        volume: 100,
+        volumeControllerVisible: false
       }
     },
     watch: {
+      volume (newValue, oldValue) {
+        const audio = this.$refs.audio
+        audio.volume = newValue * 0.01
+      },
       flag (newValue, oldValue) {
         const audio = this.$refs.audio
         if (newValue === 'pause') {
@@ -125,6 +136,9 @@
         'setPlayingMusicStatus',
         'prepareToPlay'
       ]),
+      clickVolume () {
+        this.volumeControllerVisible = !this.volumeControllerVisible
+      },
       changePlayMode () {
         this.setPlayMode()
       },
@@ -361,6 +375,44 @@
       font-size: 24px;
       margin: 0 10px;
       cursor: pointer;
+    }
+    @controller-zindex: 11;
+    .volume{
+      position: relative;
+      @controller-height: 160px;
+      @triangle-height: 10px;
+      @controller-bg-color: rgba(255, 255, 255, .5);
+      .volume-controller{
+        z-index: @controller-zindex;
+        background-color: @controller-bg-color;
+        width: 70px;
+        height: @controller-height;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: -(@controller-height + @triangle-height);
+        box-sizing: border-box;
+        padding: 20px 16px;
+        &:after{
+          content: "";
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          bottom: -@triangle-height;
+          border-top: @triangle-height/2 solid @controller-bg-color;
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-bottom: @triangle-height/2 solid transparent;
+        }
+      }
+    }
+    .volume-controller-mask{
+      position: fixed;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: @controller-zindex - 1;
     }
   }
 </style>
