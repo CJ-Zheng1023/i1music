@@ -27,7 +27,7 @@
             <el-slider v-model="volume" vertical height="120px"></el-slider>
           </div>
         </i>
-        <i class="iconfont icon-play-list"></i>
+        <i class="iconfont icon-play-list" @click="setIsOpen(true)"></i>
       </div>
       <div v-show="volumeControllerVisible" class="volume-controller-mask" @click="volumeControllerVisible = false"></div>
     </div>
@@ -134,7 +134,8 @@
         'setPlayMode',
         'setPlayingStatus',
         'setPlayingMusicStatus',
-        'prepareToPlay'
+        'prepareToPlay',
+        'setIsOpen'
       ]),
       clickVolume () {
         this.volumeControllerVisible = !this.volumeControllerVisible

@@ -3,17 +3,20 @@
     <i-header></i-header>
     <router-view></router-view>
     <i-footer></i-footer>
+    <side-bar></side-bar>
   </div>
 </template>
 
 <script>
   import Header from '@/components/header/Index'
   import Footer from '@/components/footer/Index'
+  import SideBar from '@/components/sidebar/Index'
   export default {
     name: 'App',
     components: {
       IHeader: Header,
-      IFooter: Footer
+      IFooter: Footer,
+      SideBar
     }
   }
 </script>
