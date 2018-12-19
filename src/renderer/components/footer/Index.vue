@@ -8,9 +8,9 @@
         <i class="iconfont icon-step-forward" @click="forward"></i>
       </div>
       <div class="progress">
-        <div class="figure">
+        <router-link to="/detail" tag="div" class="figure">
           <img :src="imageServer + encodeURIComponent(playingMusic.path)" />
-        </div>
+        </router-link>
         <div class="figcation">
           <div class="music-info">
             {{musicInfo}}
@@ -309,6 +309,7 @@
   @import '../../common/styles/variable.less';
   @footer-color: #fff;
   footer{
+    z-index: 2;
     background-color: @app-hf-bg-color;
     line-height: @app-footer-height;
     padding: 0 @app-lr-padding;
@@ -341,6 +342,7 @@
         float: left;
         width: @app-footer-height;
         height: @app-footer-height;
+        cursor: pointer;
         img{
           width: 100%;
           height: 100%;

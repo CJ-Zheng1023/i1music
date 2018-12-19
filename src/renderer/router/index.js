@@ -40,6 +40,11 @@ let router = new Router({
       component: () => import('@/components/setting/Index')
     },
     {
+      path: '/detail',
+      name: 'Detail',
+      component: () => import('@/components/detail/Index')
+    },
+    {
       path: '*',
       redirect: '/'
     }

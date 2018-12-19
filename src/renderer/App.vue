@@ -41,5 +41,16 @@
     box-shadow: 1px 4px 10px 2px #CCC;
     position: relative;
   }
+  #app:after{
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: inherit;
+    filter: blur(10px);
+    z-index: 1;
+  }
 
 </style>

@@ -6,5 +6,7 @@
 <style scoped lang="less">
   .container{
     height: 100%;
+    position: relative;
+    z-index: 2;
   }
 </style>

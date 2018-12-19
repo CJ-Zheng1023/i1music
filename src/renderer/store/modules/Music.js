@@ -6,6 +6,8 @@ export default {
   namespaced: true,
   state () {
     return {
+      // 应用背景图
+      defaultImage: utils.css('#app', 'backgroundImage'),
       playLists: [],
       // 允许的扩展名
       allowKeys: [],

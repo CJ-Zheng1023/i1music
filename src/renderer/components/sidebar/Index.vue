@@ -78,6 +78,7 @@
     top: 0;
     right: 0;
     bottom: 0;
+    z-index: 2;
   }
   @side-bar-width: 300px;
   .side-bar{
@@ -115,10 +116,11 @@
       &:hover{
         left: -10px;
       }
+      @figure-height: 45px;
       .figure{
         float: left;
         width: 45px;
-        height: 45px;
+        height: @figure-height;
         img{
           height: 100%;
           width: 100%;
@@ -126,6 +128,7 @@
       }
       .info{
         margin-left: 50px;
+        min-height: @figure-height;
         .title{
           margin: 5px 0;
           font-size: 16px;

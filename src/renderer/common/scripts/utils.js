@@ -39,5 +39,14 @@ export default {
   // 转成json对象
   formatData (data) {
     return JSON.parse(JSON.stringify(data))
+  },
+  // 取/赋css值
+  css (target, property, value) {
+    if (value) {
+      document.querySelector(target)['style'][property] = value
+    } else {
+      let dom = document.querySelector(target)
+      return window.getComputedStyle(dom)[property]
+    }
   }
 }
