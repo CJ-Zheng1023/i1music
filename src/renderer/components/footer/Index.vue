@@ -8,9 +8,10 @@
         <i class="iconfont icon-step-forward" @click="forward"></i>
       </div>
       <div class="progress">
-        <router-link to="/detail" tag="div" class="figure">
+        <div :class="['figure', {active: detailVisible}]" @click="clickDetail">
           <img :src="imageServer + encodeURIComponent(playingMusic.path)" />
-        </router-link>
+          <i :class="['iconfont', detailVisible ? 'icon-double-arrow-down' : 'icon-double-arrow-up']"></i>
+        </div>
         <div class="figcation">
           <div class="music-info">
             {{musicInfo}}
@@ -44,7 +45,8 @@
         percentage: 0,
         musicServerPort: 0,
         volume: 100,
-        volumeControllerVisible: false
+        volumeControllerVisible: false,
+        detailVisible: false
       }
     },
     watch: {
@@ -137,8 +139,13 @@
         'prepareToPlay',
         'setIsOpen'
       ]),
-      clickVolume () {
-        this.volumeControllerVisible = !this.volumeControllerVisible
+      clickDetail () {
+        if (!this.detailVisible) {
+          this.$router.push({path: '/detail'})
+        } else {
+          this.$router.back()
+        }
+        this.detailVisible = !this.detailVisible
       },
       changePlayMode () {
         this.setPlayMode()
@@ -343,6 +350,40 @@
         width: @app-footer-height;
         height: @app-footer-height;
         cursor: pointer;
+        position: relative;
+        &:after{
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          background-color: transparent;
+        }
+        &:hover{
+          &:after{
+            background-color: rgba(0, 0, 0, .3);
+          }
+          i{
+            visibility: visible;
+          }
+        }
+        &.active{
+          &:after{
+            background-color: rgba(0, 0, 0, .3);
+          }
+        }
+        i{
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          color: rgb(233, 233, 233);
+          visibility: hidden;
+          &.icon-double-arrow-down{
+            visibility: visible;
+          }
+        }
         img{
           width: 100%;
           height: 100%;
@@ -373,11 +414,13 @@
         }
       }
     }
-    i{
-      color: @footer-color;
-      font-size: 24px;
-      margin: 0 10px;
-      cursor: pointer;
+    .controls, .btns{
+      i{
+        color: @footer-color;
+        font-size: 24px;
+        margin: 0 10px;
+        cursor: pointer;
+      }
     }
     @controller-zindex: 11;
     .volume{
