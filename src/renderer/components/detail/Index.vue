@@ -3,6 +3,7 @@
     <div class="info">
       <div class="banner">
         <img :src="image"/>
+        <canvas></canvas>
       </div>
       <div class="title">{{playingMusic.title}}</div>
       <div class="artist">歌手:{{playingMusic.artist}}</div>
@@ -17,7 +18,9 @@
     computed: {
       ...mapState('Music', [
         'playingMusic',
-        'defaultImage'
+        'defaultImage',
+        'audioAnalyser',
+        'flag'
       ]),
       ...mapGetters('Music', [
         'imageServer'
@@ -26,12 +29,19 @@
         return `${this.imageServer}${encodeURIComponent(this.playingMusic.path)}`
       },
       backgroundImage () {
-        return `url('${this.image}')`
+        return `url("${this.image}")`
       }
     },
     watch: {
       playingMusic (newValue, oldValue) {
         utils.css('#app', 'backgroundImage', this.backgroundImage)
+      },
+      flag (newValue, oldValue) {
+        if (newValue === 'pause' || newValue === 'stop') {
+          this.stopDraw()
+        } else {
+          this.initDraw()
+        }
       }
     },
     beforeRouteEnter (to, from, next) {
@@ -41,7 +51,38 @@
     },
     beforeRouteLeave (to, from, next) {
       utils.css('#app', 'backgroundImage', this.defaultImage)
+      this.stopDraw()
       next()
+    },
+    methods: {
+      initDraw () {
+        const canvas = document.querySelector('canvas')
+        const canvasContext = canvas.getContext('2d')
+        const arrayLength = this.audioAnalyser.frequencyBinCount
+        const array = new Uint8Array(arrayLength)
+        const width = canvas.width
+        const height = canvas.height
+        this.anmationId = window.requestAnimationFrame(this.initDraw)
+        this.audioAnalyser.getByteFrequencyData(array)
+        canvasContext.clearRect(0, 0, width, height)
+        canvasContext.beginPath()
+        canvasContext.moveTo(0, height - height / 256 * array[0])
+        for (let i = 1, len = array.length; i < len; i++) {
+          canvasContext.lineTo(width / len * i, height - height / 256 * array[i])
+        }
+        const gradient = canvasContext.createLinearGradient(0, 0, width, 0)
+        gradient.addColorStop('0', '#f500d8')
+        gradient.addColorStop('1.0', '#ceaf11')
+        canvasContext.strokeStyle = gradient
+        canvasContext.stroke()
+        canvasContext.closePath()
+      },
+      stopDraw () {
+        window.cancelAnimationFrame(this.anmationId)
+      }
+    },
+    mounted () {
+      this.initDraw()
     }
   }
 </script>
@@ -71,6 +112,15 @@
         position: absolute;
         left: 0;
         top: 0;
+        z-index: 1;
+      }
+      canvas{
+        width: 100%;
+        height: 50%;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        z-index: 2;
       }
     }
     .title{

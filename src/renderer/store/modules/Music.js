@@ -16,12 +16,14 @@ export default {
       playListMusic: [],
       playListTag: [],
       playingMusic: {},
-      // 指令标志位，分为flag,reload,stop和play+musicId（用来控制footer播放面板暂停和播放按钮。在footer组建里监听该值，执行播放或暂停）
+      // 指令标志位，分为pause,reload,stop和play+musicId（用来控制footer播放面板暂停和播放按钮。在footer组建里监听该值，执行播放或暂停）
       flag: 'pause',
       // 播放模式   single单曲循环 shuffle随机播放 cycle循环播放
       playMode: 'cycle',
       // sidebar 是否展开
-      isOpen: false
+      isOpen: false,
+      // 音频解析器
+      audioAnalyser: null
     }
   },
   getters: {
@@ -44,6 +46,9 @@ export default {
     }
   },
   mutations: {
+    setAudioAnalyser (state, analyser) {
+      state.audioAnalyser = analyser
+    },
     setIsOpen (state, flag) {
       state.isOpen = flag
     },
@@ -92,6 +97,9 @@ export default {
     }
   },
   actions: {
+    setAudioAnalyser ({commit}, analyser) {
+      commit('setAudioAnalyser', analyser)
+    },
     // 控制sidebar展开/收缩
     setIsOpen ({commit}, flag) {
       commit('setIsOpen', flag)

@@ -37,6 +37,8 @@
 <script>
   import {ipcRenderer} from 'electron'
   import {mapState, mapGetters, mapActions} from 'vuex'
+  const audioContext = new AudioContext()
+  const analyser = audioContext.createAnalyser()
   export default {
     data () {
       return {
@@ -120,6 +122,7 @@
       ipcRenderer.send('view-ready')
     },
     mounted () {
+      this._initAudio()
       let audio = this.$refs.audio
       audio.addEventListener('ended', () => {
         if (this.playMode === 'single') {
@@ -137,8 +140,16 @@
         'setPlayingStatus',
         'setPlayingMusicStatus',
         'prepareToPlay',
-        'setIsOpen'
+        'setIsOpen',
+        'setAudioAnalyser'
       ]),
+      _initAudio () {
+        const audio = this.$refs.audio
+        const source = audioContext.createMediaElementSource(audio)
+        source.connect(analyser)
+        analyser.connect(audioContext.destination)
+        this.setAudioAnalyser(analyser)
+      },
       clickDetail () {
         if (!this.detailVisible) {
           this.$router.push({path: '/detail'})
