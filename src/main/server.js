@@ -58,7 +58,7 @@ const writeImage = (req, res) => {
     }
   }).catch(e => {
     console.log(e)
-    res.writeHead(302, {
+    res.writeHead(301, {
       'location': config.default_img_url
     })
     res.end()
