@@ -1,3 +1,4 @@
+import config from '@/common/scripts/config'
 const http = require('http')
 const path = require('path')
 const ms = require('mediaserver')
@@ -57,12 +58,9 @@ const writeImage = (req, res) => {
     }
   }).catch(e => {
     console.log(e)
-    let data = fs.readFileSync('./static/images/4.jpeg', 'binary')
-    res.writeHead(200, {
-      'Content-Type': 'image/jpeg',
-      'Access-Control-Allow-Origin': '*',
-      'Cache-Control': 'max-age=' + (365 * 24 * 60 * 60 * 1000)
+    res.writeHead(302, {
+      'location': config.default_img_url
     })
-    res.end(data, 'binary')
+    res.end()
   })
 }

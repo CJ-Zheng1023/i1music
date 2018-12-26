@@ -1,6 +1,5 @@
 import {remote} from 'electron'
 export default {
-  pro_server_url: 'http://rap2api.taobao.org/app/mock/116837',
-  dev_server_url: 'http://rap2api.taobao.org/app/mock/116837',
+  default_img_url: 'http://afterwin.oss-cn-beijing.aliyuncs.com/i1music/default.png',
   dbPath: `${remote.app.getPath('userData')}`
 }
