@@ -1,4 +1,3 @@
-import config from '@/common/scripts/config'
 const http = require('http')
 const path = require('path')
 const ms = require('mediaserver')
@@ -59,7 +58,7 @@ const writeImage = (req, res) => {
   }).catch(e => {
     console.log(e)
     res.writeHead(301, {
-      'location': config.default_img_url
+      'location': 'http://afterwin.oss-cn-beijing.aliyuncs.com/i1music/default.png'
     })
     res.end()
   })
