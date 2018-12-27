@@ -35,6 +35,16 @@ function createWindow () {
     mainWindow = null
   })
 }
+const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore()
+    mainWindow.focus()
+  }
+})
+if (isSecondInstance) {
+  app.quit()
+}
 server.startMusicServer((port, allowKeys) => {
   ipcMain.on('view-ready', e => {
     e.sender.send('music-server-config', {
