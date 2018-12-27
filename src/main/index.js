@@ -1,7 +1,8 @@
 'use strict'
 
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, Tray, Menu, ipcMain } from 'electron'
 import server from './server'
+const path = require('path')
 
 /**
  * Set `__static` path to static files in production
@@ -35,6 +36,22 @@ function createWindow () {
     mainWindow = null
   })
 }
+function createTray () {
+  const tray = new Tray(path.join(__static, './tray/tray.ico'))
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: '退出',
+      click () {
+        app.quit()
+      }
+    }
+  ])
+  tray.setToolTip('i1Music')
+  tray.setContextMenu(contextMenu)
+  tray.on('click', () => {
+    mainWindow.show()
+  })
+}
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
   // Someone tried to run a second instance, we should focus our window.
   if (mainWindow) {
@@ -59,7 +76,10 @@ server.startImageServer(port => {
   })
 })
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createWindow()
+  createTray()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

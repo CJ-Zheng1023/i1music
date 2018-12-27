@@ -57,9 +57,12 @@ const writeImage = (req, res) => {
     }
   }).catch(e => {
     console.log(e)
-    res.writeHead(301, {
-      'location': 'http://afterwin.oss-cn-beijing.aliyuncs.com/i1music/default.png'
+    let data = fs.readFileSync(path.join(__static, './images/default.png'), 'binary')
+    res.writeHead(200, {
+      'Content-Type': 'image/jpeg',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'max-age=' + (365 * 24 * 60 * 60 * 1000)
     })
-    res.end()
+    res.end(data, 'binary')
   })
 }
