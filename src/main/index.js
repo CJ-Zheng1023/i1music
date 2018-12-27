@@ -35,6 +35,11 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+  mainWindow.on('close', (e) => {
+    mainWindow.hide()
+    mainWindow.setSkipTaskbar(true)
+    e.preventDefault()
+  })
 }
 function createTray () {
   const tray = new Tray(path.join(__static, './tray/tray.ico'))
@@ -42,7 +47,7 @@ function createTray () {
     {
       label: '退出',
       click () {
-        app.quit()
+        mainWindow.destroy()
       }
     }
   ])
@@ -50,6 +55,7 @@ function createTray () {
   tray.setContextMenu(contextMenu)
   tray.on('click', () => {
     mainWindow.show()
+    mainWindow.setSkipTaskbar(false)
   })
 }
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
